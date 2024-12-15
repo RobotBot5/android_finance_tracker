@@ -5,7 +5,7 @@ plugins {
 
 android {
     namespace = "com.robotbot.financetracker"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.robotbot.financetracker"
@@ -32,6 +32,9 @@ android {
     }
     kotlinOptions {
         jvmTarget = "11"
+    }
+    buildFeatures {
+        viewBinding = true
     }
 }
 
