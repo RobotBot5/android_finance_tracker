@@ -1,4 +1,4 @@
-package com.robotbot.financetracker.domain
+package com.robotbot.financetracker.domain.entities
 
 enum class Currency(val symbol: String, val code: String) {
 
