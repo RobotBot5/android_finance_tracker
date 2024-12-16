@@ -1,10 +1,12 @@
 package com.robotbot.financetracker.domain.repotisories
 
+import kotlinx.coroutines.flow.Flow
+
 interface CrudRepository<T> {
 
     fun getById(id: Int): T
 
-    fun getAll(): List<T>
+    fun getAll(): Flow<List<T>>
 
     fun create(entity: T)
 

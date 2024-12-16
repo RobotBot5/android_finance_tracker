@@ -3,6 +3,8 @@ package com.robotbot.financetracker.data
 import com.robotbot.financetracker.domain.entities.BankAccountEntity
 import com.robotbot.financetracker.domain.entities.Currency
 import com.robotbot.financetracker.domain.repotisories.BankAccountRepository
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import java.math.BigDecimal
 
 object BankAccountMockRepository : BankAccountRepository {
@@ -13,8 +15,8 @@ object BankAccountMockRepository : BankAccountRepository {
         TODO("Not yet implemented")
     }
 
-    override fun getAll(): List<BankAccountEntity> {
-        return accounts
+    override fun getAll(): Flow<List<BankAccountEntity>> = flow {
+        emit(accounts.toList())
     }
 
     override fun create(entity: BankAccountEntity) {
@@ -36,7 +38,8 @@ object BankAccountMockRepository : BankAccountRepository {
                 BankAccountEntity(
                     name = "Account №$it",
                     balance = BigDecimal(1000 + it * 100),
-                    currency = Currency.USD
+                    currency = Currency.USD,
+                    id = it
                 )
             )
         }
