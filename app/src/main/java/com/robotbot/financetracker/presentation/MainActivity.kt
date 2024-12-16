@@ -35,7 +35,7 @@ class MainActivity : AppCompatActivity() {
                     true
                 }
                 R.id.nav_accounts -> {
-//                    loadFragment(SettingsFragment())
+                    loadFragment(BankAccountFragment.newInstance())
                     true
                 }
                 else -> false
