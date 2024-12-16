@@ -7,7 +7,7 @@ data class BankAccountEntity(
     val name: String,
     val balance: BigDecimal,
     val currency: Currency,
-    val transactions: List<TransactionEntity>,
-    val transfers: List<TransferEntity>,
+    val transactions: List<TransactionEntity> = listOf(),
+    val transfers: List<TransferEntity> = listOf(),
     var id: Int = UNDEFINED_ID
 )
