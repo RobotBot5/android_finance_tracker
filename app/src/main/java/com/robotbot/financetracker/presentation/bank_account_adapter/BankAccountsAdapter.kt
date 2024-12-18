@@ -1,5 +1,6 @@
 package com.robotbot.financetracker.presentation.bank_account_adapter
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
@@ -20,6 +21,7 @@ class BankAccountsAdapter @Inject constructor() :
     }
 
     override fun onBindViewHolder(holder: BankAccountViewHolder, position: Int) {
+        Log.d("BankAccountsAdapter", "onBindViewHolder")
         val bankAccount = getItem(position)
         holder.binding.tvAccountName.text = bankAccount.name
         holder.binding.tvAccountBalance.text = bankAccount.balance.toString()

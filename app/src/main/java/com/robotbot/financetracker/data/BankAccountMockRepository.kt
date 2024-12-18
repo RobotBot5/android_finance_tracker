@@ -3,6 +3,7 @@ package com.robotbot.financetracker.data
 import com.robotbot.financetracker.domain.entities.BankAccountEntity
 import com.robotbot.financetracker.domain.entities.Currency
 import com.robotbot.financetracker.domain.repotisories.BankAccountRepository
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import java.math.BigDecimal
@@ -33,7 +34,7 @@ object BankAccountMockRepository : BankAccountRepository {
 
     private fun loadData(): MutableList<BankAccountEntity> {
         val bankAccountsList = mutableListOf<BankAccountEntity>()
-        repeat(10) {
+        repeat(50) {
             bankAccountsList.add(
                 BankAccountEntity(
                     name = "Account №$it",
