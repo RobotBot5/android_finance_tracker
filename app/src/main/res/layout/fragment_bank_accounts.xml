@@ -48,10 +48,10 @@
                 android:id="@+id/btn_transfer"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
                 android:backgroundTint="@android:color/holo_blue_dark"
                 android:text="Transfer"
                 app:icon="@drawable/ic_btn_transfer"
-                android:layout_marginTop="8dp"
                 app:iconSize="18sp"
                 app:layout_constraintEnd_toStartOf="@+id/btn_transfer_history"
                 app:layout_constraintHorizontal_chainStyle="spread_inside"
@@ -78,9 +78,10 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_bank_accounts"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_margin="16dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/container_total_balance"
         tools:itemCount="20"
         tools:listitem="@layout/item_bank_account" />
