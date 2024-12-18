@@ -57,6 +57,10 @@ class BankAccountFragment : Fragment() {
             }
         }
         binding.rvBankAccounts.adapter = bankAccountsAdapter
+        binding.fabAddAccount.setOnClickListener {
+            val intent = CreateBankAccountActivity.newIntent(requireContext())
+            startActivity(intent)
+        }
     }
 
     override fun onDestroyView() {

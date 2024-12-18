@@ -40,7 +40,6 @@
         android:id="@+id/tv_currency_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:labelFor="@+id/spn_currency"
         android:text="Choose currency:"
         android:textSize="15sp"
         app:layout_constraintBottom_toBottomOf="@+id/spn_currency"
@@ -54,21 +53,32 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="24dp"
-        app:layout_constraintBottom_toTopOf="@+id/et_account_name"
+        android:labelFor="@+id/tv_currency_label"
+        app:layout_constraintBottom_toTopOf="@+id/til_account_name"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/tv_currency_label"
         app:layout_constraintTop_toBottomOf="@+id/et_account_amount" />
 
-    <EditText
-        android:id="@+id/et_account_name"
-        android:layout_width="wrap_content"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/til_account_name"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:inputType="text"
-        android:text="Name"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="24dp"
+        android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/spn_currency" />
+        app:layout_constraintTop_toBottomOf="@+id/spn_currency">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/et_account_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Account Name:"
+            android:inputType="textCapWords" />
+    </com.google.android.material.textfield.TextInputLayout>
 
     <Button
         android:id="@+id/btn_save_account"
