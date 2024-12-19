@@ -7,35 +7,6 @@
     android:layout_height="match_parent"
     tools:context=".presentation.CreateBankAccountActivity">
 
-    <EditText
-        android:id="@+id/et_account_amount"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="24dp"
-        android:hint="0"
-        android:inputType="numberDecimal"
-        android:minWidth="100dp"
-        android:textAlignment="center"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toTopOf="@+id/spn_currency"
-        app:layout_constraintEnd_toStartOf="@+id/tv_account_amount_label"
-        app:layout_constraintHorizontal_chainStyle="packed"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_chainStyle="packed" />
-
-    <TextView
-        android:id="@+id/tv_account_amount_label"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="@+id/et_account_amount"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/et_account_amount"
-        app:layout_constraintTop_toTopOf="@+id/et_account_amount"
-        tools:text="RUB" />
-
     <TextView
         android:id="@+id/tv_currency_label"
         android:layout_width="wrap_content"
@@ -54,10 +25,32 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="24dp"
         android:labelFor="@+id/tv_currency_label"
-        app:layout_constraintBottom_toTopOf="@+id/til_account_name"
+        app:layout_constraintBottom_toTopOf="@+id/til_account_amount"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/tv_currency_label"
-        app:layout_constraintTop_toBottomOf="@+id/et_account_amount" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/til_account_amount"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="24dp"
+        android:hint="Account Amount:"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toTopOf="@+id/til_account_name"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/spn_currency">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/et_account_amount"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="numberDecimal" />
+    </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/til_account_name"
@@ -66,17 +59,17 @@
         android:layout_marginHorizontal="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginBottom="24dp"
+        android:hint="Account Name:"
         android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/spn_currency">
+        app:layout_constraintTop_toBottomOf="@+id/til_account_amount">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/et_account_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Account Name:"
             android:inputType="textCapWords" />
     </com.google.android.material.textfield.TextInputLayout>
 
