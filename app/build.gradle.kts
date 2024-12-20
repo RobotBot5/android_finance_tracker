@@ -53,4 +53,6 @@ dependencies {
     implementation(libs.dagger2)
     ksp(libs.dagger2.compiler)
     ksp(libs.dagger2.android.processor)
+
+    implementation(libs.viewModel)
 }

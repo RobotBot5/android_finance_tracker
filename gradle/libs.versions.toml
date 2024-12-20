@@ -12,6 +12,8 @@ constraintlayout = "2.2.0"
 dagger2_version = "2.52"
 ksp_version ="2.0.21-1.0.28"
 
+viewModel_version="2.8.7"
+
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -21,9 +23,12 @@ androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 androidx-activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
 androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
+
 dagger2 = { group = "com.google.dagger", name = "dagger", version.ref = "dagger2_version" }
 dagger2-compiler = { group = "com.google.dagger", name = "dagger-compiler", version.ref = "dagger2_version" }
 dagger2-android-processor = { group = "com.google.dagger", name = "dagger-android-processor", version.ref = "dagger2_version" }
+
+viewModel = {group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref ="viewModel_version"}
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
