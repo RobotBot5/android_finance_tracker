@@ -8,7 +8,7 @@ interface CrudRepository<T> {
 
     fun getAll(): Flow<List<T>>
 
-    fun create(entity: T)
+    suspend fun create(entity: T)
 
     fun update(entity: T)
 

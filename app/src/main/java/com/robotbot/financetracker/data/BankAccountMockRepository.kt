@@ -5,6 +5,8 @@ import com.robotbot.financetracker.domain.entities.Currency
 import com.robotbot.financetracker.domain.repotisories.BankAccountRepository
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
 import java.math.BigDecimal
 
@@ -12,16 +14,23 @@ object BankAccountMockRepository : BankAccountRepository {
 
     private val accounts = loadData()
 
+    private val refreshEvents = MutableSharedFlow<Unit>()
+
     override fun getById(id: Int): BankAccountEntity {
         TODO("Not yet implemented")
     }
 
     override fun getAll(): Flow<List<BankAccountEntity>> = flow {
         emit(accounts.toList())
+        refreshEvents.collect {
+            emit(accounts.toList())
+        }
     }
 
-    override fun create(entity: BankAccountEntity) {
-        TODO("Not yet implemented")
+    override suspend fun create(entity: BankAccountEntity) {
+        delay(3000)
+        accounts.add(entity)
+        refreshEvents.emit(Unit)
     }
 
     override fun update(entity: BankAccountEntity) {

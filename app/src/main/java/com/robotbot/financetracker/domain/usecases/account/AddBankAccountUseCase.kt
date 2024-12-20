@@ -8,6 +8,6 @@ class AddBankAccountUseCase @Inject constructor(
     private val repository: BankAccountRepository
 ) {
 
-    operator fun invoke(account: BankAccountEntity) = repository.create(account)
+    suspend operator fun invoke(account: BankAccountEntity) = repository.create(account)
 
 }

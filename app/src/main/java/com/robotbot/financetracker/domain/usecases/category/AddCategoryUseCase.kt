@@ -7,6 +7,6 @@ class AddCategoryUseCase(
     private val repository: CategoryRepository
 ) {
 
-    operator fun invoke(category: TransactionCategoryEntity) = repository.create(category)
+    suspend operator fun invoke(category: TransactionCategoryEntity) = repository.create(category)
 
 }

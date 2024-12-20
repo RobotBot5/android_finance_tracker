@@ -9,6 +9,6 @@ class AddTransactionUseCase(
     private val repository: TransactionRepository
 ) {
 
-    operator fun invoke(transaction: TransactionEntity) = repository.create(transaction)
+    suspend operator fun invoke(transaction: TransactionEntity) = repository.create(transaction)
 
 }

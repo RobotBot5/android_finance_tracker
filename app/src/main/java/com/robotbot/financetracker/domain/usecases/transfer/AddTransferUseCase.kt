@@ -7,6 +7,6 @@ class AddTransferUseCase(
     private val repository: TransferRepository
 ) {
 
-    operator fun invoke(transfer: TransferEntity) = repository.create(transfer)
+    suspend operator fun invoke(transfer: TransferEntity) = repository.create(transfer)
 
 }
