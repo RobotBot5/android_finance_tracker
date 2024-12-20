@@ -11,7 +11,7 @@
         android:id="@+id/tv_currency_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Choose currency:"
+        android:text="@string/label_choose_currency"
         android:textSize="15sp"
         app:layout_constraintBottom_toBottomOf="@+id/spn_currency"
         app:layout_constraintEnd_toStartOf="@+id/spn_currency"
@@ -25,32 +25,11 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="24dp"
         android:labelFor="@+id/tv_currency_label"
-        app:layout_constraintBottom_toTopOf="@+id/til_account_amount"
+        app:layout_constraintBottom_toTopOf="@+id/til_account_name"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/tv_currency_label"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_chainStyle="packed" />
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/til_account_amount"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="24dp"
-        android:hint="Account Amount:"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toTopOf="@+id/til_account_name"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/spn_currency">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/et_account_amount"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="numberDecimal" />
-    </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/til_account_name"
@@ -59,12 +38,12 @@
         android:layout_marginHorizontal="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginBottom="24dp"
-        android:hint="Account Name:"
+        android:hint="@string/hint_account_name"
         android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/til_account_balance"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/til_account_amount">
+        app:layout_constraintTop_toBottomOf="@+id/spn_currency">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/et_account_name"
@@ -73,12 +52,33 @@
             android:inputType="textCapWords" />
     </com.google.android.material.textfield.TextInputLayout>
 
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/til_account_balance"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="24dp"
+        android:hint="@string/hint_account_balance"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/til_account_name">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/et_account_balance"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="numberDecimal" />
+    </com.google.android.material.textfield.TextInputLayout>
+
     <Button
         android:id="@+id/btn_save_account"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
-        android:text="Save Account"
+        android:text="@string/btn_save_account"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

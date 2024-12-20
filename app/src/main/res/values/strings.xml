@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">Finance Tracker</string>
+    <string name="label_choose_currency">Choose currency:</string>
+    <string name="hint_account_name">Account Name:</string>
+    <string name="hint_account_balance">Account Balance:</string>
+    <string name="btn_save_account">Save Account</string>
+    <string name="error_incorrect_name">Incorrect Name</string>
+    <string name="error_incorrect_balance">Incorrect Balance</string>
 </resources>
