@@ -6,7 +6,6 @@ import com.robotbot.financetracker.domain.repotisories.BankAccountRepository
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
 import java.math.BigDecimal
 
@@ -28,7 +27,6 @@ object BankAccountMockRepository : BankAccountRepository {
     }
 
     override suspend fun create(entity: BankAccountEntity) {
-        delay(3000)
         accounts.add(entity)
         refreshEvents.emit(Unit)
     }

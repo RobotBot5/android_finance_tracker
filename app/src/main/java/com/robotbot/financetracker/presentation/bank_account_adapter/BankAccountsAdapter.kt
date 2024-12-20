@@ -6,6 +6,8 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import com.robotbot.financetracker.databinding.ItemBankAccountBinding
 import com.robotbot.financetracker.domain.entities.BankAccountEntity
+import java.text.DecimalFormat
+import java.util.Locale
 import javax.inject.Inject
 
 class BankAccountsAdapter @Inject constructor() :
@@ -21,9 +23,18 @@ class BankAccountsAdapter @Inject constructor() :
     }
 
     override fun onBindViewHolder(holder: BankAccountViewHolder, position: Int) {
-        Log.d("BankAccountsAdapter", "onBindViewHolder")
         val bankAccount = getItem(position)
-        holder.binding.tvAccountName.text = bankAccount.name
-        holder.binding.tvAccountBalance.text = bankAccount.balance.toString()
+        with(holder.binding) {
+            with(bankAccount) {
+                tvAccountName.text = name
+                val decimalFormat = DecimalFormat("#,##0.##")
+                tvAccountBalance.text = String.format(
+                    Locale.getDefault(),
+                    "%s%s",
+                    currency.symbol,
+                    decimalFormat.format(balance)
+                )
+            }
+        }
     }
 }
