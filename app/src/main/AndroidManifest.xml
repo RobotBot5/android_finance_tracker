@@ -14,7 +14,7 @@
         android:theme="@style/Theme.FinanceTracker"
         tools:targetApi="31">
         <activity
-            android:name=".presentation.CreateBankAccountActivity"
+            android:name=".presentation.ManageBankAccountActivity"
             android:exported="false" />
         <activity
             android:name=".presentation.MainActivity"

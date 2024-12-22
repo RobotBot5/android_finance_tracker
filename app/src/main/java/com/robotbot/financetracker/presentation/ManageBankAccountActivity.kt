@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.view.View.GONE
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.activity.enableEdgeToEdge
@@ -23,7 +24,7 @@ import com.robotbot.financetracker.domain.entities.Currency
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class CreateBankAccountActivity : AppCompatActivity() {
+class ManageBankAccountActivity : AppCompatActivity() {
 
     private val binding by lazy {
         ActivityCreateBankAccountBinding.inflate(layoutInflater)
@@ -33,7 +34,7 @@ class CreateBankAccountActivity : AppCompatActivity() {
         (application as FinanceTrackerApp).component
     }
 
-    private val viewModel: CreateBankAccountViewModel by viewModels { viewModelFactory }
+    private val viewModel: ManageBankAccountViewModel by viewModels { viewModelFactory }
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
@@ -73,8 +74,41 @@ class CreateBankAccountActivity : AppCompatActivity() {
             }
         }
 
+        launchRightMode()
+
         observeViewModel()
         setListenersOnViews()
+    }
+
+    private fun launchRightMode() {
+        when(screenMode) {
+            MODE_ADD -> launchAddMode()
+            MODE_EDIT -> launchEditMode()
+        }
+    }
+
+    private fun launchEditMode() {
+        binding.spnCurrency.visibility = GONE
+        viewModel.loadAccountEntityById(accountId)
+        with(binding) {
+            btnSaveAccount.setOnClickListener {
+                viewModel.editAccount(
+                    etAccountName.text.toString(),
+                    etAccountBalance.text.toString()
+                )
+            }
+        }
+    }
+
+    private fun launchAddMode() {
+        with(binding) {
+            btnSaveAccount.setOnClickListener {
+                viewModel.addAccount(
+                    etAccountName.text.toString(),
+                    etAccountBalance.text.toString()
+                )
+            }
+        }
     }
 
     private fun parseParams() {
@@ -93,12 +127,6 @@ class CreateBankAccountActivity : AppCompatActivity() {
 
     private fun setListenersOnViews() {
         with(binding) {
-            btnSaveAccount.setOnClickListener {
-                viewModel.addAccount(
-                    etAccountName.text.toString(),
-                    etAccountBalance.text.toString()
-                )
-            }
             etAccountName.doOnTextChanged { _, _, _, _ ->
                 viewModel.resetErrorInputName()
             }
@@ -113,12 +141,35 @@ class CreateBankAccountActivity : AppCompatActivity() {
             repeatOnLifecycle(Lifecycle.State.RESUMED) {
                 viewModel.state.collect {
                     with(binding) {
-                        tilAccountName.error = it.nameError
-                        tilAccountBalance.error = it.balanceError
                         tilAccountBalance.suffixText = it.selectedCurrency.toString()
-                        if (it.isAccountCreated) {
-                            finish()
+                        when (it.displayState) {
+                            is DisplayState.Content -> {
+                                tilAccountName.error = it.displayState.nameError
+                                tilAccountBalance.error = it.displayState.balanceError
+                            }
+                            is DisplayState.InitialEditMode -> {
+                                etAccountName.setText(it.displayState.accountEntity.name)
+                                etAccountBalance.setText(it.displayState.accountEntity.balance.toPlainString())
+                            }
+                            is DisplayState.Loading -> {
+
+                            }
+                            is DisplayState.WorkEnded -> {
+                                finish()
+                            }
                         }
+
+//                        tilAccountName.error = it.nameError
+//                        tilAccountBalance.error = it.balanceError
+//                        tilAccountBalance.suffixText = it.selectedCurrency.toString()
+//                        val accountEntity = it.accountEntity
+//                        if (accountEntity != null) {
+//                            etAccountName.setText(accountEntity.name)
+//                            etAccountBalance.setText(accountEntity.balance.toPlainString())
+//                        }
+//                        if (it.isAccountCreated) {
+//                            finish()
+//                        }
                     }
                 }
             }
@@ -134,13 +185,13 @@ class CreateBankAccountActivity : AppCompatActivity() {
         private const val EXTRA_ACCOUNT_ID = "account_id"
 
         fun newIntentAddMode(context: Context): Intent {
-            return Intent(context, CreateBankAccountActivity::class.java).apply {
+            return Intent(context, ManageBankAccountActivity::class.java).apply {
                 putExtra(EXTRA_SCREEN_MODE, MODE_ADD)
             }
         }
 
         fun newIntentEditMode(context: Context, accountId: Int): Intent {
-            return Intent(context, CreateBankAccountActivity::class.java).apply {
+            return Intent(context, ManageBankAccountActivity::class.java).apply {
                 putExtra(EXTRA_SCREEN_MODE, MODE_EDIT)
                 putExtra(EXTRA_ACCOUNT_ID, accountId)
             }

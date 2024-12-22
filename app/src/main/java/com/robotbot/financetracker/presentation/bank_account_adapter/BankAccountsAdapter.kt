@@ -13,6 +13,8 @@ import javax.inject.Inject
 class BankAccountsAdapter @Inject constructor() :
     ListAdapter<BankAccountEntity, BankAccountViewHolder>(BankAccountDiffCallback) {
 
+    var onAccountClickListener: ((BankAccountEntity) -> Unit)? = null
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BankAccountViewHolder {
         val binding = ItemBankAccountBinding.inflate(
             LayoutInflater.from(parent.context),
@@ -34,6 +36,9 @@ class BankAccountsAdapter @Inject constructor() :
                     currency.symbol,
                     decimalFormat.format(balance)
                 )
+                root.setOnClickListener {
+                    onAccountClickListener?.invoke(this)
+                }
             }
         }
     }
