@@ -58,7 +58,7 @@ class BankAccountFragment : Fragment() {
         }
         binding.rvBankAccounts.adapter = bankAccountsAdapter
         binding.fabAddAccount.setOnClickListener {
-            val intent = CreateBankAccountActivity.newIntent(requireContext())
+            val intent = CreateBankAccountActivity.newIntentAddMode(requireContext())
             startActivity(intent)
         }
     }

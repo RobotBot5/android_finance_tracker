@@ -18,6 +18,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.robotbot.financetracker.FinanceTrackerApp
 import com.robotbot.financetracker.R
 import com.robotbot.financetracker.databinding.ActivityCreateBankAccountBinding
+import com.robotbot.financetracker.domain.DomainConstants
 import com.robotbot.financetracker.domain.entities.Currency
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -37,8 +38,13 @@ class CreateBankAccountActivity : AppCompatActivity() {
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
 
+    private var screenMode: String = MODE_UNDEFINED
+
+    private var accountId: Int = DomainConstants.UNDEFINED_ID
+
     override fun onCreate(savedInstanceState: Bundle?) {
         component.inject(this)
+        parseParams()
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(binding.root)
@@ -69,6 +75,20 @@ class CreateBankAccountActivity : AppCompatActivity() {
 
         observeViewModel()
         setListenersOnViews()
+    }
+
+    private fun parseParams() {
+        screenMode = intent.getStringExtra(EXTRA_SCREEN_MODE)
+            ?: throw RuntimeException("Extra screen mode is absent")
+        if (screenMode != MODE_EDIT && screenMode != MODE_ADD) {
+            throw RuntimeException("Unknown screen mode $screenMode")
+        }
+        if (screenMode == MODE_EDIT) {
+            accountId = intent.getIntExtra(EXTRA_ACCOUNT_ID, 0)
+            if (accountId == 0) {
+                throw RuntimeException("Param account id is absent")
+            }
+        }
     }
 
     private fun setListenersOnViews() {
@@ -107,8 +127,23 @@ class CreateBankAccountActivity : AppCompatActivity() {
 
     companion object {
 
-        fun newIntent(context: Context): Intent {
-            return Intent(context, CreateBankAccountActivity::class.java)
+        private const val EXTRA_SCREEN_MODE = "screen_mode"
+        private const val MODE_ADD = "add_mode"
+        private const val MODE_EDIT = "edit_mode"
+        private const val MODE_UNDEFINED = ""
+        private const val EXTRA_ACCOUNT_ID = "account_id"
+
+        fun newIntentAddMode(context: Context): Intent {
+            return Intent(context, CreateBankAccountActivity::class.java).apply {
+                putExtra(EXTRA_SCREEN_MODE, MODE_ADD)
+            }
+        }
+
+        fun newIntentEditMode(context: Context, accountId: Int): Intent {
+            return Intent(context, CreateBankAccountActivity::class.java).apply {
+                putExtra(EXTRA_SCREEN_MODE, MODE_EDIT)
+                putExtra(EXTRA_ACCOUNT_ID, accountId)
+            }
         }
 
     }
