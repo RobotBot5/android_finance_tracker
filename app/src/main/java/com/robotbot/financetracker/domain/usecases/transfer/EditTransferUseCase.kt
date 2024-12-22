@@ -7,6 +7,6 @@ class EditTransferUseCase(
     private val repository: TransferRepository
 ) {
 
-    operator fun invoke(transfer: TransferEntity) = repository.update(transfer)
+    suspend operator fun invoke(transfer: TransferEntity) = repository.update(transfer)
 
 }

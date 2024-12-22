@@ -7,6 +7,6 @@ class GetBankAccountUseCase @Inject constructor(
     private val repository: BankAccountRepository
 ) {
 
-    operator fun invoke(id: Int) = repository.getById(id)
+    suspend operator fun invoke(id: Int) = repository.getById(id)
 
 }

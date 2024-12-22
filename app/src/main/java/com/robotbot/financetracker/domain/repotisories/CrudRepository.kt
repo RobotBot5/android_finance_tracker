@@ -4,13 +4,13 @@ import kotlinx.coroutines.flow.Flow
 
 interface CrudRepository<T> {
 
-    fun getById(id: Int): T
+    suspend fun getById(id: Int): T
 
     fun getAll(): Flow<List<T>>
 
     suspend fun create(entity: T)
 
-    fun update(entity: T)
+    suspend fun update(entity: T)
 
     fun delete(id: Int)
 

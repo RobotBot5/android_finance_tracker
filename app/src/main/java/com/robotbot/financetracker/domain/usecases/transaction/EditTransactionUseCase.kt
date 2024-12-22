@@ -9,6 +9,6 @@ class EditTransactionUseCase(
     private val repository: TransactionRepository
 ) {
 
-    operator fun invoke(transaction: TransactionEntity) = repository.update(transaction)
+    suspend operator fun invoke(transaction: TransactionEntity) = repository.update(transaction)
 
 }

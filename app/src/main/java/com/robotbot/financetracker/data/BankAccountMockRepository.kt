@@ -1,5 +1,6 @@
 package com.robotbot.financetracker.data
 
+import com.robotbot.financetracker.domain.DomainConstants
 import com.robotbot.financetracker.domain.entities.BankAccountEntity
 import com.robotbot.financetracker.domain.entities.Currency
 import com.robotbot.financetracker.domain.repotisories.BankAccountRepository
@@ -15,8 +16,10 @@ object BankAccountMockRepository : BankAccountRepository {
 
     private val refreshEvents = MutableSharedFlow<Unit>()
 
-    override fun getById(id: Int): BankAccountEntity {
-        TODO("Not yet implemented")
+    override suspend fun getById(id: Int): BankAccountEntity {
+        return accounts.find {
+            it.id == id
+        } ?: throw IllegalArgumentException("Account with id:$id doesn't exist")
     }
 
     override fun getAll(): Flow<List<BankAccountEntity>> = flow {
@@ -27,12 +30,19 @@ object BankAccountMockRepository : BankAccountRepository {
     }
 
     override suspend fun create(entity: BankAccountEntity) {
+        if (entity.id == DomainConstants.UNDEFINED_ID) {
+            entity.id = accounts.size + 1
+        }
         accounts.add(entity)
         refreshEvents.emit(Unit)
     }
 
-    override fun update(entity: BankAccountEntity) {
-        TODO("Not yet implemented")
+    override suspend fun update(entity: BankAccountEntity) {
+        val oldAccount = getById(entity.id)
+        accounts.remove(oldAccount)
+        accounts.add(entity)
+        accounts.sortBy { it.id }
+        refreshEvents.emit(Unit)
     }
 
     override fun delete(id: Int) {
@@ -41,13 +51,13 @@ object BankAccountMockRepository : BankAccountRepository {
 
     private fun loadData(): MutableList<BankAccountEntity> {
         val bankAccountsList = mutableListOf<BankAccountEntity>()
-        repeat(50) {
+        for (i in 1..10) {
             bankAccountsList.add(
                 BankAccountEntity(
-                    name = "Account №$it",
-                    balance = BigDecimal(1000 + it * 100),
+                    name = "Account №$i",
+                    balance = BigDecimal(1000 + i * 100),
                     currency = Currency.USD,
-                    id = it
+                    id = i
                 )
             )
         }

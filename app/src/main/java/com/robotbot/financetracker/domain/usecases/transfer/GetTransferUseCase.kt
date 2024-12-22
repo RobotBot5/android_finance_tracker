@@ -6,6 +6,6 @@ class GetTransferUseCase(
     private val repository: TransferRepository
 ) {
 
-    operator fun invoke(id: Int) = repository.getById(id)
+    suspend operator fun invoke(id: Int) = repository.getById(id)
 
 }

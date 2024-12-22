@@ -7,6 +7,6 @@ class EditCategoryUseCase(
     private val repository: CategoryRepository
 ) {
 
-    operator fun invoke(category: TransactionCategoryEntity) = repository.update(category)
+    suspend operator fun invoke(category: TransactionCategoryEntity) = repository.update(category)
 
 }
