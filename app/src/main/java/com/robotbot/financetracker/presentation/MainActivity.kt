@@ -38,6 +38,10 @@ class MainActivity : AppCompatActivity() {
                     loadFragment(BankAccountFragment.newInstance())
                     true
                 }
+                R.id.nav_categories -> {
+//                    loadFragment(BankAccountFragment.newInstance())
+                    true
+                }
                 else -> false
             }
         }
