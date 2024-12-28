@@ -18,7 +18,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.robotbot.financetracker.FinanceTrackerApp
 import com.robotbot.financetracker.R
-import com.robotbot.financetracker.databinding.ActivityCreateBankAccountBinding
+import com.robotbot.financetracker.databinding.ActivityManageBankAccountBinding
 import com.robotbot.financetracker.domain.DomainConstants
 import com.robotbot.financetracker.domain.entities.Currency
 import kotlinx.coroutines.launch
@@ -27,7 +27,7 @@ import javax.inject.Inject
 class ManageBankAccountActivity : AppCompatActivity() {
 
     private val binding by lazy {
-        ActivityCreateBankAccountBinding.inflate(layoutInflater)
+        ActivityManageBankAccountBinding.inflate(layoutInflater)
     }
 
     private val component by lazy {
