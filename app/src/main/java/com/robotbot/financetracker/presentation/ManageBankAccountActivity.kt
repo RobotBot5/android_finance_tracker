@@ -25,7 +25,8 @@ import com.robotbot.financetracker.domain.entities.Currency
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class ManageBankAccountActivity : AppCompatActivity() {
+class ManageBankAccountActivity : AppCompatActivity(),
+    DeleteAccountDialogFragment.DeleteAccountDialogListener {
 
     private val binding by lazy {
         ActivityManageBankAccountBinding.inflate(layoutInflater)
@@ -43,6 +44,8 @@ class ManageBankAccountActivity : AppCompatActivity() {
     private var screenMode: String = MODE_UNDEFINED
 
     private var accountId: Int = DomainConstants.UNDEFINED_ID
+
+    private lateinit var accountName: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         component.inject(this)
@@ -81,8 +84,12 @@ class ManageBankAccountActivity : AppCompatActivity() {
         setListenersOnViews()
     }
 
+    override fun onDialogPositiveClick() {
+        viewModel.deleteAccount()
+    }
+
     private fun launchRightMode() {
-        when(screenMode) {
+        when (screenMode) {
             MODE_ADD -> launchAddMode()
             MODE_EDIT -> launchEditMode()
         }
@@ -100,7 +107,9 @@ class ManageBankAccountActivity : AppCompatActivity() {
                 )
             }
             btnDeleteAccount.setOnClickListener {
-                viewModel.deleteAccount()
+                DeleteAccountDialogFragment.newInstance(
+                    accountName = accountName
+                ).show(supportFragmentManager, "DELETE_DIALOG")
             }
         }
     }
@@ -152,13 +161,17 @@ class ManageBankAccountActivity : AppCompatActivity() {
                                 tilAccountName.error = it.displayState.nameError
                                 tilAccountBalance.error = it.displayState.balanceError
                             }
+
                             is DisplayState.InitialEditMode -> {
                                 etAccountName.setText(it.displayState.accountEntity.name)
                                 etAccountBalance.setText(it.displayState.accountEntity.balance.toPlainString())
+                                accountName = it.displayState.accountEntity.name
                             }
+
                             is DisplayState.Loading -> {
 
                             }
+
                             is DisplayState.WorkEnded -> {
                                 finish()
                             }
