@@ -7,6 +7,6 @@ class DeleteBankAccountUseCase @Inject constructor(
     private val repository: BankAccountRepository
 ) {
 
-    operator fun invoke(id: Int) = repository.delete(id)
+    suspend operator fun invoke(id: Int) = repository.delete(id)
 
 }

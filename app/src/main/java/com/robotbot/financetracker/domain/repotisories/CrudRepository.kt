@@ -12,6 +12,6 @@ interface CrudRepository<T> {
 
     suspend fun update(entity: T)
 
-    fun delete(id: Int)
+    suspend fun delete(id: Int)
 
 }

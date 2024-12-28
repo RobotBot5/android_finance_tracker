@@ -6,6 +6,6 @@ class DeleteTransferUseCase(
     private val repository: TransferRepository
 ) {
 
-    operator fun invoke(id: Int) = repository.delete(id)
+    suspend operator fun invoke(id: Int) = repository.delete(id)
 
 }

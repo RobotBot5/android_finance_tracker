@@ -8,6 +8,7 @@ import com.robotbot.financetracker.domain.DomainConstants
 import com.robotbot.financetracker.domain.entities.BankAccountEntity
 import com.robotbot.financetracker.domain.entities.Currency
 import com.robotbot.financetracker.domain.usecases.account.AddBankAccountUseCase
+import com.robotbot.financetracker.domain.usecases.account.DeleteBankAccountUseCase
 import com.robotbot.financetracker.domain.usecases.account.EditBankAccountUseCase
 import com.robotbot.financetracker.domain.usecases.account.GetBankAccountUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,6 +22,7 @@ class ManageBankAccountViewModel @Inject constructor(
     private val addBankAccountUseCase: AddBankAccountUseCase,
     private val getBankAccountUseCase: GetBankAccountUseCase,
     private val editBankAccountUseCase: EditBankAccountUseCase,
+    private val deleteBankAccountUseCase: DeleteBankAccountUseCase,
     private val application: Application
 ) : ViewModel() {
 
@@ -28,6 +30,17 @@ class ManageBankAccountViewModel @Inject constructor(
     val state = _state.asStateFlow()
 
     private var editAccountId: Int = DomainConstants.UNDEFINED_ID
+
+    fun deleteAccount() {
+        viewModelScope.launch {
+            deleteBankAccountUseCase(editAccountId)
+            _state.update {
+                it.copy(
+                    displayState = DisplayState.WorkEnded
+                )
+            }
+        }
+    }
 
     fun editAccount(inputName: String, inputBalance: String) {
         handleAccountOperation(inputName, inputBalance) { account ->

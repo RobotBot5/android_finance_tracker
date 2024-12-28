@@ -99,6 +99,9 @@ class ManageBankAccountActivity : AppCompatActivity() {
                     etAccountBalance.text.toString()
                 )
             }
+            btnDeleteAccount.setOnClickListener {
+                viewModel.deleteAccount()
+            }
         }
     }
 

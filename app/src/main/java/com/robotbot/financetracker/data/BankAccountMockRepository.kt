@@ -45,8 +45,11 @@ object BankAccountMockRepository : BankAccountRepository {
         refreshEvents.emit(Unit)
     }
 
-    override fun delete(id: Int) {
-        TODO("Not yet implemented")
+    override suspend fun delete(id: Int) {
+        accounts.removeIf {
+            it.id == id
+        }
+        refreshEvents.emit(Unit)
     }
 
     private fun loadData(): MutableList<BankAccountEntity> {
