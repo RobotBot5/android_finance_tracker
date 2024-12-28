@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.activity.enableEdgeToEdge
@@ -89,6 +90,7 @@ class ManageBankAccountActivity : AppCompatActivity() {
 
     private fun launchEditMode() {
         binding.spnCurrency.visibility = GONE
+        binding.btnDeleteAccount.visibility = VISIBLE
         viewModel.loadAccountEntityById(accountId)
         with(binding) {
             btnSaveAccount.setOnClickListener {
