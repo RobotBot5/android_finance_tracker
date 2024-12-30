@@ -50,6 +50,11 @@ class CategoryFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel = ViewModelProvider(this, viewModelFactory)[CategoryViewModel::class.java]
+        categoryAdapter.onAddButtonClickListener = {
+            CreateCategoryActivity.newIntent(requireContext()).apply {
+                startActivity(this)
+            }
+        }
         binding.rvCategories.adapter = categoryAdapter
         lifecycleScope.launch {
             viewModel.categories.collect {

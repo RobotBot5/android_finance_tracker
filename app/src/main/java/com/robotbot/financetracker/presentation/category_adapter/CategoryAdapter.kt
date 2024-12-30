@@ -10,6 +10,8 @@ import javax.inject.Inject
 class CategoryAdapter @Inject constructor() :
     ListAdapter<TransactionCategoryEntity, CategoryViewHolder>(CategoryDiffCallback) {
 
+    var onAddButtonClickListener: (() -> Unit)? = null
+
     private companion object {
         const val VIEW_CATEGORY_TYPE = 0
         const val VIEW_ADD_BUTTON_TYPE = 1
@@ -43,6 +45,9 @@ class CategoryAdapter @Inject constructor() :
         } else if (getItemViewType(position) == VIEW_ADD_BUTTON_TYPE) {
             with(holder.binding) {
                 tvCategoryTitle.text = "Add category"
+                root.setOnClickListener {
+                    onAddButtonClickListener?.invoke()
+                }
             }
         }
     }

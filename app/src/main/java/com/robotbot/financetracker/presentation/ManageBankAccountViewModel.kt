@@ -36,7 +36,7 @@ class ManageBankAccountViewModel @Inject constructor(
             deleteBankAccountUseCase(editAccountId)
             _state.update {
                 it.copy(
-                    displayState = DisplayState.WorkEnded
+                    displayState = AccountManagementDisplayState.WorkEnded
                 )
             }
         }
@@ -68,7 +68,7 @@ class ManageBankAccountViewModel @Inject constructor(
         if (nameError != null || balanceError != null) {
             _state.update {
                 it.copy(
-                    displayState = DisplayState.Content(
+                    displayState = AccountManagementDisplayState.Content(
                         nameError = nameError,
                         balanceError = balanceError
                     )
@@ -87,20 +87,20 @@ class ManageBankAccountViewModel @Inject constructor(
                 )
             )
             _state.update {
-                it.copy(displayState = DisplayState.WorkEnded)
+                it.copy(displayState = AccountManagementDisplayState.WorkEnded)
             }
         }
     }
 
-    private fun updateErrorStateIfContent(update: DisplayState.Content.() -> DisplayState.Content) {
+    private fun updateErrorStateIfContent(update: AccountManagementDisplayState.Content.() -> AccountManagementDisplayState.Content) {
         val currentDisplayState = _state.value.displayState
-        if (currentDisplayState is DisplayState.Content) {
+        if (currentDisplayState is AccountManagementDisplayState.Content) {
             _state.update {
                 it.copy(displayState = currentDisplayState.update())
             }
         } else {
             _state.update {
-                it.copy(displayState = DisplayState.Content().update())
+                it.copy(displayState = AccountManagementDisplayState.Content().update())
             }
         }
     }
@@ -153,7 +153,7 @@ class ManageBankAccountViewModel @Inject constructor(
             editAccountId = accountEntity.id
             _state.update {
                 it.copy(
-                    displayState = DisplayState.InitialEditMode(
+                    displayState = AccountManagementDisplayState.InitialEditMode(
                         accountEntity
                     ),
                     selectedCurrency = accountEntity.currency

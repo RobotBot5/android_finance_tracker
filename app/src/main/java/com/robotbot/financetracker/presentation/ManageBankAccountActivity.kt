@@ -157,22 +157,22 @@ class ManageBankAccountActivity : AppCompatActivity(),
                     with(binding) {
                         tilAccountBalance.suffixText = it.selectedCurrency.toString()
                         when (it.displayState) {
-                            is DisplayState.Content -> {
+                            is AccountManagementDisplayState.Content -> {
                                 tilAccountName.error = it.displayState.nameError
                                 tilAccountBalance.error = it.displayState.balanceError
                             }
 
-                            is DisplayState.InitialEditMode -> {
+                            is AccountManagementDisplayState.InitialEditMode -> {
                                 etAccountName.setText(it.displayState.accountEntity.name)
                                 etAccountBalance.setText(it.displayState.accountEntity.balance.toPlainString())
                                 accountName = it.displayState.accountEntity.name
                             }
 
-                            is DisplayState.Loading -> {
+                            is AccountManagementDisplayState.Loading -> {
 
                             }
 
-                            is DisplayState.WorkEnded -> {
+                            is AccountManagementDisplayState.WorkEnded -> {
                                 finish()
                             }
                         }
