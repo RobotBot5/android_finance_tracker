@@ -2,6 +2,7 @@ package com.robotbot.financetracker.di
 
 import androidx.lifecycle.ViewModel
 import com.robotbot.financetracker.presentation.BankAccountViewModel
+import com.robotbot.financetracker.presentation.CategoryViewModel
 import com.robotbot.financetracker.presentation.ManageBankAccountViewModel
 import dagger.Binds
 import dagger.Module
@@ -19,5 +20,10 @@ interface ViewModelModule {
     @IntoMap
     @ViewModelKey(ManageBankAccountViewModel::class)
     fun bindCreateBankAccountViewModel(viewModel: ManageBankAccountViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(CategoryViewModel::class)
+    fun bindCategoryViewModel(viewModel: CategoryViewModel): ViewModel
 
 }

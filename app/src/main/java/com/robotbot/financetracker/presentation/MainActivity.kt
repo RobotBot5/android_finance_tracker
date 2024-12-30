@@ -39,7 +39,7 @@ class MainActivity : AppCompatActivity() {
                     true
                 }
                 R.id.nav_categories -> {
-//                    loadFragment(BankAccountFragment.newInstance())
+                    loadFragment(CategoryFragment.newInstance())
                     true
                 }
                 else -> false
