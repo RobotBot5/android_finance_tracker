@@ -6,6 +6,7 @@ import com.robotbot.financetracker.domain.entities.Currency
 data class AccountManagementState(
     val displayState: AccountManagementDisplayState = AccountManagementDisplayState.Content(),
     val selectedCurrency: Currency = Currency.RUB,
+    val accountToDeleteName: String? = null
 )
 
 sealed interface AccountManagementDisplayState {
