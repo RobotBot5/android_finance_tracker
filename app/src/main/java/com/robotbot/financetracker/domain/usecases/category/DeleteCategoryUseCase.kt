@@ -1,8 +1,9 @@
 package com.robotbot.financetracker.domain.usecases.category
 
 import com.robotbot.financetracker.domain.repotisories.CategoryRepository
+import javax.inject.Inject
 
-class DeleteCategoryUseCase(
+class DeleteCategoryUseCase @Inject constructor(
     private val repository: CategoryRepository
 ) {
 

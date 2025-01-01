@@ -110,7 +110,7 @@ class ManageBankAccountActivity : AppCompatActivity(),
                     val accountName = viewModel.state.first().accountToDeleteName ?: return@launch
                     DeleteAccountDialogFragment.newInstance(
                         accountName = accountName
-                    ).show(supportFragmentManager, "DELETE_DIALOG")
+                    ).show(supportFragmentManager, "DELETE_ACCOUNT_DIALOG")
                 }
             }
         }

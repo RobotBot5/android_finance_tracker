@@ -11,6 +11,7 @@ class CategoryAdapter @Inject constructor() :
     ListAdapter<TransactionCategoryEntity, CategoryViewHolder>(CategoryDiffCallback) {
 
     var onAddButtonClickListener: (() -> Unit)? = null
+    var onCategoryClickListener: ((TransactionCategoryEntity) -> Unit)? = null
 
     private companion object {
         const val VIEW_CATEGORY_TYPE = 0
@@ -40,6 +41,9 @@ class CategoryAdapter @Inject constructor() :
             with(holder.binding) {
                 with(category) {
                     tvCategoryTitle.text = name
+                }
+                root.setOnClickListener {
+                    onCategoryClickListener?.invoke(category)
                 }
             }
         } else if (getItemViewType(position) == VIEW_ADD_BUTTON_TYPE) {

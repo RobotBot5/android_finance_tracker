@@ -1,15 +1,13 @@
 package com.robotbot.financetracker.data
 
+import android.util.Log
 import com.robotbot.financetracker.domain.DomainConstants
-import com.robotbot.financetracker.domain.entities.BankAccountEntity
-import com.robotbot.financetracker.domain.entities.Currency
 import com.robotbot.financetracker.domain.entities.TransactionCategoryEntity
 import com.robotbot.financetracker.domain.entities.TransactionType
 import com.robotbot.financetracker.domain.repotisories.CategoryRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.flow
-import java.math.BigDecimal
 
 object CategoryMockRepository : CategoryRepository {
 
@@ -32,17 +30,22 @@ object CategoryMockRepository : CategoryRepository {
 
     override suspend fun create(entity: TransactionCategoryEntity) {
         if (entity.id == DomainConstants.UNDEFINED_ID) {
-            entity.id = categories.size + 1
+            entity.id = categories.maxOf { it.id } + 1
         }
         categories.add(entity)
         refreshEvents.emit(Unit)
     }
 
     override suspend fun update(entity: TransactionCategoryEntity) {
-        val oldAccount = getById(entity.id)
-        categories.remove(oldAccount)
+        val oldCategory = getById(entity.id)
+        categories.remove(oldCategory)
         categories.add(entity)
         categories.sortBy { it.id }
+        Log.d("CategoryMockRepository", "Start")
+        categories.forEach {
+            Log.d("CategoryMockRepository", it.toString())
+        }
+        Log.d("CategoryMockRepository", "End")
         refreshEvents.emit(Unit)
     }
 

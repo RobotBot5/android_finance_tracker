@@ -3,7 +3,7 @@ package com.robotbot.financetracker.di
 import android.app.Application
 import com.robotbot.financetracker.presentation.BankAccountFragment
 import com.robotbot.financetracker.presentation.CategoryFragment
-import com.robotbot.financetracker.presentation.CreateCategoryActivity
+import com.robotbot.financetracker.presentation.ManageCategoryActivity
 import com.robotbot.financetracker.presentation.ManageBankAccountActivity
 import dagger.BindsInstance
 import dagger.Component
@@ -18,7 +18,7 @@ interface ApplicationComponent {
 
     fun inject(categoryFragment: CategoryFragment)
 
-    fun inject(createCategoryActivity: CreateCategoryActivity)
+    fun inject(manageCategoryActivity: ManageCategoryActivity)
 
 
     @Component.Factory

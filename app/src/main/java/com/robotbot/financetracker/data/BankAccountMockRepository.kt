@@ -4,7 +4,6 @@ import com.robotbot.financetracker.domain.DomainConstants
 import com.robotbot.financetracker.domain.entities.BankAccountEntity
 import com.robotbot.financetracker.domain.entities.Currency
 import com.robotbot.financetracker.domain.repotisories.BankAccountRepository
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.flow
@@ -31,7 +30,7 @@ object BankAccountMockRepository : BankAccountRepository {
 
     override suspend fun create(entity: BankAccountEntity) {
         if (entity.id == DomainConstants.UNDEFINED_ID) {
-            entity.id = accounts.size + 1
+            entity.id = accounts.maxOf { it.id } + 1
         }
         accounts.add(entity)
         refreshEvents.emit(Unit)

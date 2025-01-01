@@ -8,7 +8,6 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.GridLayoutManager
 import com.robotbot.financetracker.FinanceTrackerApp
 import com.robotbot.financetracker.databinding.FragmentCategoryBinding
 import com.robotbot.financetracker.presentation.category_adapter.CategoryAdapter
@@ -51,7 +50,12 @@ class CategoryFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         viewModel = ViewModelProvider(this, viewModelFactory)[CategoryViewModel::class.java]
         categoryAdapter.onAddButtonClickListener = {
-            CreateCategoryActivity.newIntent(requireContext()).apply {
+            ManageCategoryActivity.newIntentAddMode(requireContext()).apply {
+                startActivity(this)
+            }
+        }
+        categoryAdapter.onCategoryClickListener = {
+            ManageCategoryActivity.newIntentEditMode(requireContext(), it.id).apply {
                 startActivity(this)
             }
         }
