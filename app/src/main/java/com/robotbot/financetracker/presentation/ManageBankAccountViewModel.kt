@@ -156,7 +156,8 @@ class ManageBankAccountViewModel @Inject constructor(
                     displayState = DisplayState.InitialEditMode(
                         accountEntity
                     ),
-                    selectedCurrency = accountEntity.currency
+                    selectedCurrency = accountEntity.currency,
+                    accountToDeleteName = accountEntity.name
                 )
             }
         }

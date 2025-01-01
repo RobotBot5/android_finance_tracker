@@ -22,6 +22,7 @@ import com.robotbot.financetracker.R
 import com.robotbot.financetracker.databinding.ActivityManageBankAccountBinding
 import com.robotbot.financetracker.domain.DomainConstants
 import com.robotbot.financetracker.domain.entities.Currency
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -44,8 +45,6 @@ class ManageBankAccountActivity : AppCompatActivity(),
     private var screenMode: String = MODE_UNDEFINED
 
     private var accountId: Int = DomainConstants.UNDEFINED_ID
-
-    private lateinit var accountName: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         component.inject(this)
@@ -107,9 +106,12 @@ class ManageBankAccountActivity : AppCompatActivity(),
                 )
             }
             btnDeleteAccount.setOnClickListener {
-                DeleteAccountDialogFragment.newInstance(
-                    accountName = accountName
-                ).show(supportFragmentManager, "DELETE_DIALOG")
+                lifecycleScope.launch {
+                    val accountName = viewModel.state.first().accountToDeleteName ?: return@launch
+                    DeleteAccountDialogFragment.newInstance(
+                        accountName = accountName
+                    ).show(supportFragmentManager, "DELETE_DIALOG")
+                }
             }
         }
     }
@@ -165,7 +167,6 @@ class ManageBankAccountActivity : AppCompatActivity(),
                             is DisplayState.InitialEditMode -> {
                                 etAccountName.setText(it.displayState.accountEntity.name)
                                 etAccountBalance.setText(it.displayState.accountEntity.balance.toPlainString())
-                                accountName = it.displayState.accountEntity.name
                             }
 
                             is DisplayState.Loading -> {
