@@ -19,6 +19,7 @@ import com.robotbot.financetracker.databinding.ActivityManageCategoryBinding
 import com.robotbot.financetracker.domain.DomainConstants
 import com.robotbot.financetracker.domain.entities.TransactionType
 import com.robotbot.financetracker.presentation.ViewModelFactory
+import com.robotbot.financetracker.presentation.category.manage.icons_adapter.IconAdapter
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -39,6 +40,9 @@ class ManageCategoryActivity : AppCompatActivity(),
 
     private val viewModel: ManageCategoryViewModel by viewModels { viewModelFactory }
 
+    @Inject
+    lateinit var iconsAdapter: IconAdapter
+
     private var screenMode: String = MODE_UNDEFINED
 
     private var categoryId: Int = DomainConstants.UNDEFINED_ID
@@ -57,6 +61,7 @@ class ManageCategoryActivity : AppCompatActivity(),
         observeViewModel()
         setListenersOnViews()
         launchRightMode()
+        binding.rvCategoryIcons.adapter = iconsAdapter
     }
 
     private fun parseParams() {

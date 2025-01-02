@@ -1,6 +1,7 @@
 package com.robotbot.financetracker.presentation.category.manage
 
 import android.app.Application
+import androidx.core.content.res.use
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.robotbot.financetracker.R
@@ -25,7 +26,11 @@ class ManageCategoryViewModel @Inject constructor(
     private val application: Application
 ) : ViewModel() {
 
-    private val _state = MutableStateFlow(ManageCategoryState(ManageCategoryDisplayState.Initial))
+    private val _state = MutableStateFlow(
+        ManageCategoryState(
+            displayState = ManageCategoryDisplayState.Initial
+        )
+    )
     val state = _state.asStateFlow()
 
     private var editCategoryIdOrUndefined: Int = DomainConstants.UNDEFINED_ID
@@ -73,7 +78,8 @@ class ManageCategoryViewModel @Inject constructor(
                 CategoryEntity(
                     id = editCategoryIdOrUndefined,
                     name = name,
-                    transactionType = type
+                    transactionType = type,
+                    iconResId = R.drawable.ic_category_shopping_cart
                 )
             )
             _state.update {

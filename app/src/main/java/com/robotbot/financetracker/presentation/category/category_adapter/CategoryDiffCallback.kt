@@ -1,4 +1,4 @@
-package com.robotbot.financetracker.presentation.category.adapter
+package com.robotbot.financetracker.presentation.category.category_adapter
 
 import androidx.recyclerview.widget.DiffUtil
 import com.robotbot.financetracker.domain.entities.CategoryEntity

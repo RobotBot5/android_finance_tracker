@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="category_icons">
+        <item>@drawable/ic_category_bank</item>
+        <item>@drawable/ic_category_bus</item>
+        <item>@drawable/ic_category_car</item>
+        <item>@drawable/ic_category_car_electric</item>
+        <item>@drawable/ic_category_card</item>
+        <item>@drawable/ic_category_car</item>
+        <item>@drawable/ic_category_electric_station</item>
+        <item>@drawable/ic_category_gas_station</item>
+        <item>@drawable/ic_category_scooter</item>
+        <item>@drawable/ic_category_shopping_cart</item>
+        <item>@drawable/ic_category_shopping_bag</item>
+        <item>@drawable/ic_category_train</item>
+        <item>@drawable/ic_category_wallet</item>
+    </array>
+</resources>

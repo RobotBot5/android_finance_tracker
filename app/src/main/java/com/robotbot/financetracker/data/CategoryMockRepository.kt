@@ -1,6 +1,7 @@
 package com.robotbot.financetracker.data
 
 import android.util.Log
+import com.robotbot.financetracker.R
 import com.robotbot.financetracker.domain.DomainConstants
 import com.robotbot.financetracker.domain.entities.CategoryEntity
 import com.robotbot.financetracker.domain.entities.TransactionType
@@ -63,7 +64,8 @@ object CategoryMockRepository : CategoryRepository {
                 CategoryEntity(
                     id = i,
                     transactionType = TransactionType.INCOME,
-                    name = "Name: $i"
+                    name = "Name: $i",
+                    iconResId = R.drawable.ic_category_shopping_cart
                 )
             )
         }

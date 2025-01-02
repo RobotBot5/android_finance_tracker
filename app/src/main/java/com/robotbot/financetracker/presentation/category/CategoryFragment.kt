@@ -11,7 +11,7 @@ import androidx.lifecycle.lifecycleScope
 import com.robotbot.financetracker.presentation.FinanceTrackerApp
 import com.robotbot.financetracker.databinding.FragmentCategoryBinding
 import com.robotbot.financetracker.presentation.ViewModelFactory
-import com.robotbot.financetracker.presentation.category.adapter.CategoryAdapter
+import com.robotbot.financetracker.presentation.category.category_adapter.CategoryAdapter
 import com.robotbot.financetracker.presentation.category.manage.ManageCategoryActivity
 import kotlinx.coroutines.launch
 import javax.inject.Inject
