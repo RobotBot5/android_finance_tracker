@@ -14,7 +14,7 @@
         android:layout_marginHorizontal="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginBottom="24dp"
-        android:hint="Category Name:"
+        android:hint="@string/hint_category_name"
         android:textSize="20sp"
         app:layout_constraintBottom_toTopOf="@+id/rg_category_type"
         app:layout_constraintEnd_toEndOf="parent"
@@ -45,14 +45,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
-            android:text="Expense" />
+            android:text="@string/rb_expense" />
 
         <RadioButton
             android:id="@+id/rb_income"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
-            android:text="Income" />
+            android:text="@string/rb_income" />
 
     </RadioGroup>
 
@@ -62,7 +62,7 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="16dp"
         android:backgroundTint="@android:color/holo_red_light"
-        android:text="Delete Category"
+        android:text="@string/btn_category_delete"
         android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@+id/btn_save_category"
         tools:visibility="visible" />
@@ -72,7 +72,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
-        android:text="Save Category"
+        android:text="@string/btn_category_save"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

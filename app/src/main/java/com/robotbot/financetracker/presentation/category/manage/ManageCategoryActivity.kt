@@ -10,7 +10,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.widget.doOnTextChanged
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.robotbot.financetracker.presentation.FinanceTrackerApp
 import com.robotbot.financetracker.R
 import com.robotbot.financetracker.databinding.ActivityManageCategoryBinding
@@ -57,59 +59,6 @@ class ManageCategoryActivity : AppCompatActivity(),
         launchRightMode()
     }
 
-    override fun onDialogPositiveClick() {
-        viewModel.deleteCategory()
-    }
-
-    private fun launchRightMode() {
-        when (screenMode) {
-            MODE_ADD -> launchAddMode()
-            MODE_EDIT -> launchEditMode()
-        }
-    }
-
-    private fun launchEditMode() {
-        viewModel.loadCategoryEntityById(categoryId)
-        with (binding) {
-            btnDeleteCategory.visibility = VISIBLE
-            btnSaveCategory.setOnClickListener {
-                val categoryType = if (rbExpense.isChecked) {
-                    TransactionType.EXPENSE
-                } else {
-                    TransactionType.INCOME
-                }
-                viewModel.editCategory(
-                    inputName = etCategoryName.text.toString(),
-                    type = categoryType
-                )
-            }
-            btnDeleteCategory.setOnClickListener {
-                lifecycleScope.launch {
-                    val categoryName = viewModel.state.first().categoryToDeleteName ?: return@launch
-                    DeleteCategoryDialogFragment.newInstance(
-                        categoryName = categoryName
-                    ).show(supportFragmentManager, "DELETE_CATEGORY_DIALOG")
-                }
-            }
-        }
-    }
-
-    private fun launchAddMode() {
-        with (binding) {
-            btnSaveCategory.setOnClickListener {
-                val categoryType = if (rbExpense.isChecked) {
-                    TransactionType.EXPENSE
-                } else {
-                    TransactionType.INCOME
-                }
-                viewModel.addCategory(
-                    inputName = etCategoryName.text.toString(),
-                    type = categoryType
-                )
-            }
-        }
-    }
-
     private fun parseParams() {
         screenMode = intent.getStringExtra(EXTRA_SCREEN_MODE)
             ?: throw RuntimeException("Extra screen mode is absent")
@@ -124,6 +73,35 @@ class ManageCategoryActivity : AppCompatActivity(),
         }
     }
 
+    private fun observeViewModel() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                viewModel.state.collect {
+                    with(binding) {
+                        when (it.displayState) {
+                            is ManageCategoryDisplayState.Initial -> {
+                                rbExpense.isChecked = true
+                            }
+
+                            is ManageCategoryDisplayState.InitialEditMode -> {
+                                etCategoryName.setText(it.displayState.categoryEntity.name)
+                                if (it.displayState.categoryEntity.transactionType == TransactionType.INCOME) {
+                                    rbIncome.isChecked = true
+                                }
+                            }
+
+                            is ManageCategoryDisplayState.Content -> {
+                                tilCategoryName.error = it.displayState.nameError
+                            }
+
+                            ManageCategoryDisplayState.WorkEnded -> finish()
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     private fun setListenersOnViews() {
         with(binding) {
             etCategoryName.doOnTextChanged { _, _, _, _ ->
@@ -132,29 +110,57 @@ class ManageCategoryActivity : AppCompatActivity(),
         }
     }
 
-    private fun observeViewModel() {
-        lifecycleScope.launch {
-            viewModel.state.collect {
-                with (binding) {
-                    when (it.displayState) {
-                        is ManageCategoryDisplayState.Initial -> {
-                            rbExpense.isChecked = true
-                        }
+    private fun launchRightMode() {
+        when (screenMode) {
+            MODE_ADD -> launchAddMode()
+            MODE_EDIT -> launchEditMode()
+        }
+    }
 
-                        is ManageCategoryDisplayState.Content -> {
-                            tilCategoryName.error = it.displayState.nameError
-                        }
-                        ManageCategoryDisplayState.WorkEnded -> finish()
-                        is ManageCategoryDisplayState.InitialEditMode -> {
-                            etCategoryName.setText(it.displayState.categoryEntity.name)
-                            if (it.displayState.categoryEntity.transactionType == TransactionType.INCOME) {
-                                rbIncome.isChecked = true
-                            }
-                        }
-                    }
+    private fun launchEditMode() {
+        viewModel.setupEditCategoryById(categoryId)
+        with(binding) {
+            btnDeleteCategory.visibility = VISIBLE
+            btnDeleteCategory.setOnClickListener {
+                lifecycleScope.launch {
+                    val categoryName = viewModel.state.value.categoryToDeleteName ?: return@launch
+                    DeleteCategoryDialogFragment.newInstance(
+                        categoryName = categoryName
+                    ).show(supportFragmentManager, "DELETE_CATEGORY_DIALOG")
                 }
             }
+            btnSaveCategory.setOnClickListener {
+                val categoryType = getCategoryType()
+                viewModel.editCategory(
+                    inputName = etCategoryName.text.toString(),
+                    type = categoryType
+                )
+            }
         }
+    }
+
+    private fun launchAddMode() {
+        with(binding) {
+            btnSaveCategory.setOnClickListener {
+                val categoryType = getCategoryType()
+                viewModel.addCategory(
+                    inputName = etCategoryName.text.toString(),
+                    type = categoryType
+                )
+            }
+        }
+    }
+
+    private fun getCategoryType(): TransactionType {
+        return if (binding.rbExpense.isChecked) {
+            TransactionType.EXPENSE
+        } else {
+            TransactionType.INCOME
+        }
+    }
+
+    override fun onDeleteCategoryDialogPositiveClick() {
+        viewModel.deleteCategory()
     }
 
     companion object {

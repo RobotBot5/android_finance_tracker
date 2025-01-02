@@ -3,6 +3,7 @@ package com.robotbot.financetracker.presentation.category.adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
+import com.robotbot.financetracker.R
 import com.robotbot.financetracker.databinding.ItemCategoryBinding
 import com.robotbot.financetracker.domain.entities.CategoryEntity
 import javax.inject.Inject
@@ -39,16 +40,15 @@ class CategoryAdapter @Inject constructor() :
         if (getItemViewType(position) == VIEW_CATEGORY_TYPE) {
             val category = getItem(position)
             with(holder.binding) {
-                with(category) {
-                    tvCategoryTitle.text = name
-                }
+                tvCategoryTitle.text = category.name
                 root.setOnClickListener {
                     onCategoryClickListener?.invoke(category)
                 }
             }
         } else if (getItemViewType(position) == VIEW_ADD_BUTTON_TYPE) {
             with(holder.binding) {
-                tvCategoryTitle.text = "Add category"
+                tvCategoryTitle.text =
+                    holder.binding.root.context.getString(R.string.btn_category_add)
                 root.setOnClickListener {
                     onAddButtonClickListener?.invoke()
                 }

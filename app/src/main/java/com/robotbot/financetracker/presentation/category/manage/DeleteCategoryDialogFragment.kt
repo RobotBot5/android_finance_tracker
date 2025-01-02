@@ -35,19 +35,19 @@ class DeleteCategoryDialogFragment : DialogFragment() {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return activity?.let {
-            val builder = AlertDialog.Builder(it)
-            builder.setMessage(getString(R.string.dialog_message_delete_category, categoryName))
+            AlertDialog.Builder(it)
+                .setMessage(getString(R.string.dialog_message_delete_category, categoryName))
                 .setPositiveButton(getString(R.string.dialog_delete_account_button_confirm)) { _, _ ->
-                    deleteCategoryDialogListener.onDialogPositiveClick()
+                    deleteCategoryDialogListener.onDeleteCategoryDialogPositiveClick()
                 }
                 .setNegativeButton(getString(R.string.dialog_delete_account_button_cancel)) { _, _ ->
                 }
-            builder.create()
+                .create()
         } ?: throw IllegalStateException("Activity == null")
     }
 
     interface DeleteCategoryDialogListener {
-        fun onDialogPositiveClick()
+        fun onDeleteCategoryDialogPositiveClick()
     }
 
     companion object {
