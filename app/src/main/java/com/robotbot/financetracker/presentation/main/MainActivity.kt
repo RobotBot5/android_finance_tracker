@@ -1,4 +1,4 @@
-package com.robotbot.financetracker.presentation
+package com.robotbot.financetracker.presentation.main
 
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
@@ -8,6 +8,8 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 import com.robotbot.financetracker.R
 import com.robotbot.financetracker.databinding.ActivityMainBinding
+import com.robotbot.financetracker.presentation.bank_account.BankAccountFragment
+import com.robotbot.financetracker.presentation.category.CategoryFragment
 
 class MainActivity : AppCompatActivity() {
 

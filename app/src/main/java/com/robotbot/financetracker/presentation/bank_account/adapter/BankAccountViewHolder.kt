@@ -1,4 +1,4 @@
-package com.robotbot.financetracker.presentation.bank_account_adapter
+package com.robotbot.financetracker.presentation.bank_account.adapter
 
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.robotbot.financetracker.databinding.ItemBankAccountBinding

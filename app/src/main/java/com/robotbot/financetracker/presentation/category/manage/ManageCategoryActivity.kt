@@ -1,4 +1,4 @@
-package com.robotbot.financetracker.presentation
+package com.robotbot.financetracker.presentation.category.manage
 
 import android.content.Context
 import android.content.Intent
@@ -11,16 +11,18 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.lifecycleScope
-import com.robotbot.financetracker.FinanceTrackerApp
+import com.robotbot.financetracker.presentation.FinanceTrackerApp
 import com.robotbot.financetracker.R
 import com.robotbot.financetracker.databinding.ActivityManageCategoryBinding
 import com.robotbot.financetracker.domain.DomainConstants
 import com.robotbot.financetracker.domain.entities.TransactionType
+import com.robotbot.financetracker.presentation.ViewModelFactory
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class ManageCategoryActivity : AppCompatActivity(), DeleteCategoryDialogFragment.DeleteCategoryDialogListener {
+class ManageCategoryActivity : AppCompatActivity(),
+    DeleteCategoryDialogFragment.DeleteCategoryDialogListener {
 
     private val binding by lazy {
         ActivityManageCategoryBinding.inflate(layoutInflater)

@@ -1,4 +1,4 @@
-package com.robotbot.financetracker.presentation.category_adapter
+package com.robotbot.financetracker.presentation.category.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup

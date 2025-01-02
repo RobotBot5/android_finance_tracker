@@ -1,4 +1,4 @@
-package com.robotbot.financetracker.presentation
+package com.robotbot.financetracker.presentation.category.manage
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

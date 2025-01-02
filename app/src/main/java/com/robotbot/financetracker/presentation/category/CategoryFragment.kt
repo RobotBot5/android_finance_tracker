@@ -1,4 +1,4 @@
-package com.robotbot.financetracker.presentation
+package com.robotbot.financetracker.presentation.category
 
 import android.content.Context
 import android.os.Bundle
@@ -8,9 +8,11 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import com.robotbot.financetracker.FinanceTrackerApp
+import com.robotbot.financetracker.presentation.FinanceTrackerApp
 import com.robotbot.financetracker.databinding.FragmentCategoryBinding
-import com.robotbot.financetracker.presentation.category_adapter.CategoryAdapter
+import com.robotbot.financetracker.presentation.ViewModelFactory
+import com.robotbot.financetracker.presentation.category.adapter.CategoryAdapter
+import com.robotbot.financetracker.presentation.category.manage.ManageCategoryActivity
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 

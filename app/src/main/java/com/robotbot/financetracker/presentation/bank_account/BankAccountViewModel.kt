@@ -1,4 +1,4 @@
-package com.robotbot.financetracker.presentation
+package com.robotbot.financetracker.presentation.bank_account
 
 import androidx.lifecycle.ViewModel
 import com.robotbot.financetracker.domain.usecases.account.GetBankAccountListUseCase

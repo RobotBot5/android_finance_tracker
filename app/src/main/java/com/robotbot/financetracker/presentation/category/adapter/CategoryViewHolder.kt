@@ -1,4 +1,4 @@
-package com.robotbot.financetracker.presentation.category_adapter
+package com.robotbot.financetracker.presentation.category.adapter
 
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.robotbot.financetracker.databinding.ItemCategoryBinding

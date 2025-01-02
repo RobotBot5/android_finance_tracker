@@ -1,4 +1,4 @@
-package com.robotbot.financetracker.presentation
+package com.robotbot.financetracker.presentation.bank_account.manage
 
 import android.app.Application
 import androidx.lifecycle.ViewModel

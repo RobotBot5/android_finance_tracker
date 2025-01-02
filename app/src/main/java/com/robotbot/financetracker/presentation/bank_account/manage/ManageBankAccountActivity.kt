@@ -1,4 +1,4 @@
-package com.robotbot.financetracker.presentation
+package com.robotbot.financetracker.presentation.bank_account.manage
 
 import android.content.Context
 import android.content.Intent
@@ -17,11 +17,12 @@ import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.robotbot.financetracker.FinanceTrackerApp
+import com.robotbot.financetracker.presentation.FinanceTrackerApp
 import com.robotbot.financetracker.R
 import com.robotbot.financetracker.databinding.ActivityManageBankAccountBinding
 import com.robotbot.financetracker.domain.DomainConstants
 import com.robotbot.financetracker.domain.entities.Currency
+import com.robotbot.financetracker.presentation.ViewModelFactory
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
