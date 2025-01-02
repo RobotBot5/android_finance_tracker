@@ -4,12 +4,13 @@ import com.robotbot.financetracker.domain.entities.BankAccountEntity
 import com.robotbot.financetracker.domain.entities.Currency
 
 data class ManageBankAccountState(
-    val displayState: ManageBankAccountDisplayState = ManageBankAccountDisplayState.Content(),
+    val displayState: ManageBankAccountDisplayState = ManageBankAccountDisplayState.Initial,
     val selectedCurrency: Currency = Currency.RUB,
     val accountToDeleteName: String? = null
 )
 
 sealed interface ManageBankAccountDisplayState {
+    data object Initial : ManageBankAccountDisplayState
     data class InitialEditMode(
         val accountEntity: BankAccountEntity
     ) : ManageBankAccountDisplayState

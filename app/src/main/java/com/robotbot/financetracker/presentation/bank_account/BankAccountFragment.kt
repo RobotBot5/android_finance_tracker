@@ -29,10 +29,10 @@ class BankAccountFragment : Fragment() {
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
 
+    private lateinit var viewModel: BankAccountViewModel
+
     @Inject
     lateinit var bankAccountsAdapter: BankAccountsAdapter
-
-    private lateinit var viewModel: BankAccountViewModel
 
     override fun onAttach(context: Context) {
         component.inject(this)
@@ -53,16 +53,24 @@ class BankAccountFragment : Fragment() {
         viewModel = ViewModelProvider(
             this,
             viewModelFactory)[BankAccountViewModel::class.java]
-        lifecycleScope.launch {
-            viewModel.bankAccounts.collect {
-                bankAccountsAdapter.submitList(it)
-            }
-        }
+        setupRecyclerView()
+        setupListenersOnViews()
+    }
+
+    private fun setupRecyclerView() {
         bankAccountsAdapter.onAccountClickListener = {
             val intent = ManageBankAccountActivity.newIntentEditMode(requireContext(), it.id)
             startActivity(intent)
         }
         binding.rvBankAccounts.adapter = bankAccountsAdapter
+        lifecycleScope.launch {
+            viewModel.bankAccounts.collect {
+                bankAccountsAdapter.submitList(it)
+            }
+        }
+    }
+
+    private fun setupListenersOnViews() {
         binding.fabAddAccount.setOnClickListener {
             val intent = ManageBankAccountActivity.newIntentAddMode(requireContext())
             startActivity(intent)

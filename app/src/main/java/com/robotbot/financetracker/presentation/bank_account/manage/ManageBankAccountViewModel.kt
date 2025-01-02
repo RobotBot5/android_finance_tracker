@@ -29,18 +29,7 @@ class ManageBankAccountViewModel @Inject constructor(
     private val _state = MutableStateFlow(ManageBankAccountState())
     val state = _state.asStateFlow()
 
-    private var editAccountId: Int = DomainConstants.UNDEFINED_ID
-
-    fun deleteAccount() {
-        viewModelScope.launch {
-            deleteBankAccountUseCase(editAccountId)
-            _state.update {
-                it.copy(
-                    displayState = ManageBankAccountDisplayState.WorkEnded
-                )
-            }
-        }
-    }
+    private var editAccountIdOrUndefined: Int = DomainConstants.UNDEFINED_ID
 
     fun editAccount(inputName: String, inputBalance: String) {
         handleAccountOperation(inputName, inputBalance) { account ->
@@ -80,7 +69,7 @@ class ManageBankAccountViewModel @Inject constructor(
         viewModelScope.launch {
             operation(
                 BankAccountEntity(
-                    id = editAccountId,
+                    id = editAccountIdOrUndefined,
                     name = name,
                     balance = balance,
                     currency = _state.value.selectedCurrency
@@ -92,16 +81,16 @@ class ManageBankAccountViewModel @Inject constructor(
         }
     }
 
-    private fun updateErrorStateIfContent(update: ManageBankAccountDisplayState.Content.() -> ManageBankAccountDisplayState.Content) {
-        val currentDisplayState = _state.value.displayState
-        if (currentDisplayState is ManageBankAccountDisplayState.Content) {
-            _state.update {
-                it.copy(displayState = currentDisplayState.update())
-            }
-        } else {
-            _state.update {
-                it.copy(displayState = ManageBankAccountDisplayState.Content().update())
-            }
+    private fun parseName(name: String): String {
+        return name.trim()
+    }
+
+    private fun parseBalance(balance: String): BigDecimal {
+        val parsedStringBalance = balance.trim()
+        return try {
+            parsedStringBalance.toBigDecimal()
+        } catch (e: NumberFormatException) {
+            ERROR_PARSE_BALANCE
         }
     }
 
@@ -115,17 +104,14 @@ class ManageBankAccountViewModel @Inject constructor(
     else
         null
 
-
-    private fun parseName(name: String): String {
-        return name.trim()
-    }
-
-    private fun parseBalance(balance: String): BigDecimal {
-        val parsedStringBalance = balance.trim()
-        return try {
-            parsedStringBalance.toBigDecimal()
-        } catch (e: NumberFormatException) {
-            ERROR_PARSE_BALANCE
+    fun deleteAccount() {
+        viewModelScope.launch {
+            deleteBankAccountUseCase(editAccountIdOrUndefined)
+            _state.update {
+                it.copy(
+                    displayState = ManageBankAccountDisplayState.WorkEnded
+                )
+            }
         }
     }
 
@@ -141,16 +127,32 @@ class ManageBankAccountViewModel @Inject constructor(
         }
     }
 
-    fun setCurrency(currency: Currency) {
+    private fun updateErrorStateIfContent(
+        update: ManageBankAccountDisplayState.Content.() ->
+        ManageBankAccountDisplayState.Content
+    ) {
+        val currentDisplayState = _state.value.displayState
+        if (currentDisplayState is ManageBankAccountDisplayState.Content) {
+            _state.update {
+                it.copy(displayState = currentDisplayState.update())
+            }
+        } else {
+            _state.update {
+                it.copy(displayState = ManageBankAccountDisplayState.Content().update())
+            }
+        }
+    }
+
+    fun setCurrencyToState(currency: Currency) {
         _state.value = _state.value.copy(
             selectedCurrency = currency
         )
     }
 
-    fun loadAccountEntityById(accountId: Int) {
+    fun setupAccountToEditById(accountId: Int) {
         viewModelScope.launch {
             val accountEntity = getBankAccountUseCase(accountId)
-            editAccountId = accountEntity.id
+            editAccountIdOrUndefined = accountEntity.id
             _state.update {
                 it.copy(
                     displayState = ManageBankAccountDisplayState.InitialEditMode(

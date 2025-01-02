@@ -38,10 +38,10 @@ class ManageBankAccountActivity : AppCompatActivity(),
         (application as FinanceTrackerApp).component
     }
 
-    private val viewModel: ManageBankAccountViewModel by viewModels { viewModelFactory }
-
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
+
+    private val viewModel: ManageBankAccountViewModel by viewModels { viewModelFactory }
 
     private var screenMode: String = MODE_UNDEFINED
 
@@ -71,7 +71,7 @@ class ManageBankAccountActivity : AppCompatActivity(),
                 position: Int,
                 id: Long
             ) {
-                viewModel.setCurrency(parent?.getItemAtPosition(position) as Currency)
+                viewModel.setCurrencyToState(parent?.getItemAtPosition(position) as Currency)
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {
@@ -84,8 +84,18 @@ class ManageBankAccountActivity : AppCompatActivity(),
         setListenersOnViews()
     }
 
-    override fun onDialogPositiveClick() {
-        viewModel.deleteAccount()
+    private fun parseParams() {
+        screenMode = intent.getStringExtra(EXTRA_SCREEN_MODE)
+            ?: throw RuntimeException("Extra screen mode is absent")
+        if (screenMode != MODE_EDIT && screenMode != MODE_ADD) {
+            throw RuntimeException("Unknown screen mode $screenMode")
+        }
+        if (screenMode == MODE_EDIT) {
+            accountId = intent.getIntExtra(EXTRA_ACCOUNT_ID, 0)
+            if (accountId == 0) {
+                throw RuntimeException("Param account id is absent")
+            }
+        }
     }
 
     private fun launchRightMode() {
@@ -98,7 +108,7 @@ class ManageBankAccountActivity : AppCompatActivity(),
     private fun launchEditMode() {
         binding.spnCurrency.visibility = GONE
         binding.btnDeleteAccount.visibility = VISIBLE
-        viewModel.loadAccountEntityById(accountId)
+        viewModel.setupAccountToEditById(accountId)
         with(binding) {
             btnSaveAccount.setOnClickListener {
                 viewModel.editAccount(
@@ -108,7 +118,7 @@ class ManageBankAccountActivity : AppCompatActivity(),
             }
             btnDeleteAccount.setOnClickListener {
                 lifecycleScope.launch {
-                    val accountName = viewModel.state.first().accountToDeleteName ?: return@launch
+                    val accountName = viewModel.state.value.accountToDeleteName ?: return@launch
                     DeleteBankAccountDialogFragment.newInstance(
                         accountName = accountName
                     ).show(supportFragmentManager, "DELETE_ACCOUNT_DIALOG")
@@ -128,31 +138,6 @@ class ManageBankAccountActivity : AppCompatActivity(),
         }
     }
 
-    private fun parseParams() {
-        screenMode = intent.getStringExtra(EXTRA_SCREEN_MODE)
-            ?: throw RuntimeException("Extra screen mode is absent")
-        if (screenMode != MODE_EDIT && screenMode != MODE_ADD) {
-            throw RuntimeException("Unknown screen mode $screenMode")
-        }
-        if (screenMode == MODE_EDIT) {
-            accountId = intent.getIntExtra(EXTRA_ACCOUNT_ID, 0)
-            if (accountId == 0) {
-                throw RuntimeException("Param account id is absent")
-            }
-        }
-    }
-
-    private fun setListenersOnViews() {
-        with(binding) {
-            etAccountName.doOnTextChanged { _, _, _, _ ->
-                viewModel.resetErrorInputName()
-            }
-            etAccountBalance.doOnTextChanged { _, _, _, _ ->
-                viewModel.resetErrorInputBalance()
-            }
-        }
-    }
-
     private fun observeViewModel() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.RESUMED) {
@@ -160,6 +145,8 @@ class ManageBankAccountActivity : AppCompatActivity(),
                     with(binding) {
                         tilAccountBalance.suffixText = it.selectedCurrency.toString()
                         when (it.displayState) {
+                            ManageBankAccountDisplayState.Initial -> {
+                            }
                             is ManageBankAccountDisplayState.Content -> {
                                 tilAccountName.error = it.displayState.nameError
                                 tilAccountBalance.error = it.displayState.balanceError
@@ -178,23 +165,27 @@ class ManageBankAccountActivity : AppCompatActivity(),
                                 finish()
                             }
                         }
-
-//                        tilAccountName.error = it.nameError
-//                        tilAccountBalance.error = it.balanceError
-//                        tilAccountBalance.suffixText = it.selectedCurrency.toString()
-//                        val accountEntity = it.accountEntity
-//                        if (accountEntity != null) {
-//                            etAccountName.setText(accountEntity.name)
-//                            etAccountBalance.setText(accountEntity.balance.toPlainString())
-//                        }
-//                        if (it.isAccountCreated) {
-//                            finish()
-//                        }
                     }
                 }
             }
         }
     }
+
+    private fun setListenersOnViews() {
+        with(binding) {
+            etAccountName.doOnTextChanged { _, _, _, _ ->
+                viewModel.resetErrorInputName()
+            }
+            etAccountBalance.doOnTextChanged { _, _, _, _ ->
+                viewModel.resetErrorInputBalance()
+            }
+        }
+    }
+
+    override fun onDialogPositiveClick() {
+        viewModel.deleteAccount()
+    }
+
 
     companion object {
 
