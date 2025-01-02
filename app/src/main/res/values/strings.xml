@@ -11,4 +11,11 @@
     <string name="dialog_message_delete_category">Are you sure you want to delete the %s category?</string>
     <string name="dialog_delete_account_button_confirm">Delete</string>
     <string name="dialog_delete_account_button_cancel">Cancel</string>
+    <string name="til_category_error_name">Incorrect name</string>
+    <string name="btn_category_add">Add category</string>
+    <string name="hint_category_name">Category Name:</string>
+    <string name="rb_expense">Expense</string>
+    <string name="rb_income">Income</string>
+    <string name="btn_category_delete">Delete Category</string>
+    <string name="btn_category_save">Save Category</string>
 </resources>

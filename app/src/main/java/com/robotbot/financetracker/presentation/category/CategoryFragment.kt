@@ -29,10 +29,10 @@ class CategoryFragment : Fragment() {
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
 
+    private lateinit var viewModel: CategoryViewModel
+
     @Inject
     lateinit var categoryAdapter: CategoryAdapter
-
-    private lateinit var viewModel: CategoryViewModel
 
     override fun onAttach(context: Context) {
         component.inject(this)
@@ -51,6 +51,10 @@ class CategoryFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel = ViewModelProvider(this, viewModelFactory)[CategoryViewModel::class.java]
+        setupRecyclerView()
+    }
+
+    private fun setupRecyclerView() {
         categoryAdapter.onAddButtonClickListener = {
             ManageCategoryActivity.newIntentAddMode(requireContext()).apply {
                 startActivity(this)

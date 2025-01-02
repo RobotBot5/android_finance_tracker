@@ -1,7 +1,9 @@
 package com.robotbot.financetracker.presentation.category.manage
 
+import android.app.Application
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.robotbot.financetracker.R
 import com.robotbot.financetracker.domain.DomainConstants
 import com.robotbot.financetracker.domain.entities.CategoryEntity
 import com.robotbot.financetracker.domain.entities.TransactionType
@@ -20,12 +22,13 @@ class ManageCategoryViewModel @Inject constructor(
     private val editCategoryUseCase: EditCategoryUseCase,
     private val getCategoryUseCase: GetCategoryUseCase,
     private val deleteCategoryUseCase: DeleteCategoryUseCase,
+    private val application: Application
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(ManageCategoryState(ManageCategoryDisplayState.Initial))
     val state = _state.asStateFlow()
 
-    private var editCategoryId: Int = DomainConstants.UNDEFINED_ID
+    private var editCategoryIdOrUndefined: Int = DomainConstants.UNDEFINED_ID
 
     fun editCategory(inputName: String, type: TransactionType) {
         handleCategoryOperation(inputName, type) { category ->
@@ -39,6 +42,17 @@ class ManageCategoryViewModel @Inject constructor(
         }
     }
 
+    fun deleteCategory() {
+        viewModelScope.launch {
+            deleteCategoryUseCase(editCategoryIdOrUndefined)
+            _state.update {
+                it.copy(
+                    displayState = ManageCategoryDisplayState.WorkEnded
+                )
+            }
+        }
+    }
+
     private fun handleCategoryOperation(
         inputName: String,
         type: TransactionType,
@@ -46,9 +60,10 @@ class ManageCategoryViewModel @Inject constructor(
     ) {
         val name = inputName.trim()
 
-        if (name.isBlank()) {
+        val errorByInputName = validateInputName(name)
+        if (errorByInputName != null) {
             _state.update {
-                it.copy(displayState = ManageCategoryDisplayState.Content(nameError = "Incorrect name"))
+                it.copy(displayState = ManageCategoryDisplayState.Content(nameError = errorByInputName))
             }
             return
         }
@@ -56,7 +71,7 @@ class ManageCategoryViewModel @Inject constructor(
         viewModelScope.launch {
             operation(
                 CategoryEntity(
-                    id = editCategoryId,
+                    id = editCategoryIdOrUndefined,
                     name = name,
                     transactionType = type
                 )
@@ -67,6 +82,12 @@ class ManageCategoryViewModel @Inject constructor(
         }
     }
 
+    private fun validateInputName(name: String): String? {
+        return if (name.isBlank()) {
+            application.getString(R.string.til_category_error_name)
+        } else null
+    }
+
     fun resetErrorInputName() {
         _state.update {
             it.copy(
@@ -75,21 +96,10 @@ class ManageCategoryViewModel @Inject constructor(
         }
     }
 
-    fun deleteCategory() {
-        viewModelScope.launch {
-            deleteCategoryUseCase(editCategoryId)
-            _state.update {
-                it.copy(
-                    displayState = ManageCategoryDisplayState.WorkEnded
-                )
-            }
-        }
-    }
-
-    fun loadCategoryEntityById(categoryId: Int) {
+    fun setupEditCategoryById(categoryId: Int) {
         viewModelScope.launch {
             val categoryEntity = getCategoryUseCase(categoryId)
-            editCategoryId = categoryEntity.id
+            editCategoryIdOrUndefined = categoryEntity.id
             _state.update {
                 it.copy(
                     displayState = ManageCategoryDisplayState.InitialEditMode(
