@@ -26,7 +26,7 @@ class ManageBankAccountViewModel @Inject constructor(
     private val application: Application
 ) : ViewModel() {
 
-    private val _state = MutableStateFlow(AccountManagementState())
+    private val _state = MutableStateFlow(ManageBankAccountState())
     val state = _state.asStateFlow()
 
     private var editAccountId: Int = DomainConstants.UNDEFINED_ID
@@ -36,7 +36,7 @@ class ManageBankAccountViewModel @Inject constructor(
             deleteBankAccountUseCase(editAccountId)
             _state.update {
                 it.copy(
-                    displayState = AccountManagementDisplayState.WorkEnded
+                    displayState = ManageBankAccountDisplayState.WorkEnded
                 )
             }
         }
@@ -68,7 +68,7 @@ class ManageBankAccountViewModel @Inject constructor(
         if (nameError != null || balanceError != null) {
             _state.update {
                 it.copy(
-                    displayState = AccountManagementDisplayState.Content(
+                    displayState = ManageBankAccountDisplayState.Content(
                         nameError = nameError,
                         balanceError = balanceError
                     )
@@ -87,20 +87,20 @@ class ManageBankAccountViewModel @Inject constructor(
                 )
             )
             _state.update {
-                it.copy(displayState = AccountManagementDisplayState.WorkEnded)
+                it.copy(displayState = ManageBankAccountDisplayState.WorkEnded)
             }
         }
     }
 
-    private fun updateErrorStateIfContent(update: AccountManagementDisplayState.Content.() -> AccountManagementDisplayState.Content) {
+    private fun updateErrorStateIfContent(update: ManageBankAccountDisplayState.Content.() -> ManageBankAccountDisplayState.Content) {
         val currentDisplayState = _state.value.displayState
-        if (currentDisplayState is AccountManagementDisplayState.Content) {
+        if (currentDisplayState is ManageBankAccountDisplayState.Content) {
             _state.update {
                 it.copy(displayState = currentDisplayState.update())
             }
         } else {
             _state.update {
-                it.copy(displayState = AccountManagementDisplayState.Content().update())
+                it.copy(displayState = ManageBankAccountDisplayState.Content().update())
             }
         }
     }
@@ -153,7 +153,7 @@ class ManageBankAccountViewModel @Inject constructor(
             editAccountId = accountEntity.id
             _state.update {
                 it.copy(
-                    displayState = AccountManagementDisplayState.InitialEditMode(
+                    displayState = ManageBankAccountDisplayState.InitialEditMode(
                         accountEntity
                     ),
                     selectedCurrency = accountEntity.currency,

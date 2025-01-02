@@ -2,7 +2,7 @@ package com.robotbot.financetracker.data
 
 import android.util.Log
 import com.robotbot.financetracker.domain.DomainConstants
-import com.robotbot.financetracker.domain.entities.TransactionCategoryEntity
+import com.robotbot.financetracker.domain.entities.CategoryEntity
 import com.robotbot.financetracker.domain.entities.TransactionType
 import com.robotbot.financetracker.domain.repotisories.CategoryRepository
 import kotlinx.coroutines.flow.Flow
@@ -15,20 +15,20 @@ object CategoryMockRepository : CategoryRepository {
 
     private val refreshEvents = MutableSharedFlow<Unit>()
 
-    override suspend fun getById(id: Int): TransactionCategoryEntity {
+    override suspend fun getById(id: Int): CategoryEntity {
         return categories.find {
             it.id == id
         } ?: throw IllegalArgumentException("Category with id:$id doesn't exist")
     }
 
-    override fun getAll(): Flow<List<TransactionCategoryEntity>> = flow {
+    override fun getAll(): Flow<List<CategoryEntity>> = flow {
         emit(categories.toList())
         refreshEvents.collect {
             emit(categories.toList())
         }
     }
 
-    override suspend fun create(entity: TransactionCategoryEntity) {
+    override suspend fun create(entity: CategoryEntity) {
         if (entity.id == DomainConstants.UNDEFINED_ID) {
             entity.id = categories.maxOf { it.id } + 1
         }
@@ -36,7 +36,7 @@ object CategoryMockRepository : CategoryRepository {
         refreshEvents.emit(Unit)
     }
 
-    override suspend fun update(entity: TransactionCategoryEntity) {
+    override suspend fun update(entity: CategoryEntity) {
         val oldCategory = getById(entity.id)
         categories.remove(oldCategory)
         categories.add(entity)
@@ -56,11 +56,11 @@ object CategoryMockRepository : CategoryRepository {
         refreshEvents.emit(Unit)
     }
 
-    private fun loadData(): MutableList<TransactionCategoryEntity> {
-        val categoriesList = mutableListOf<TransactionCategoryEntity>()
+    private fun loadData(): MutableList<CategoryEntity> {
+        val categoriesList = mutableListOf<CategoryEntity>()
         for (i in 1..10) {
             categoriesList.add(
-                TransactionCategoryEntity(
+                CategoryEntity(
                     id = i,
                     transactionType = TransactionType.INCOME,
                     name = "Name: $i"

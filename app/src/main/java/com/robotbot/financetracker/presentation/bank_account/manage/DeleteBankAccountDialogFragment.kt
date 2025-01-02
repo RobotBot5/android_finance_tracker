@@ -7,7 +7,7 @@ import android.os.Bundle
 import androidx.fragment.app.DialogFragment
 import com.robotbot.financetracker.R
 
-class DeleteAccountDialogFragment : DialogFragment() {
+class DeleteBankAccountDialogFragment : DialogFragment() {
 
     private lateinit var deleteAccountDialogListener: DeleteAccountDialogListener
 
@@ -55,8 +55,8 @@ class DeleteAccountDialogFragment : DialogFragment() {
         private const val ACCOUNT_NAME_KEY = "account_name"
         private const val ACCOUNT_NAME_UNDEFINED = ""
 
-        fun newInstance(accountName: String): DeleteAccountDialogFragment {
-            return DeleteAccountDialogFragment().apply {
+        fun newInstance(accountName: String): DeleteBankAccountDialogFragment {
+            return DeleteBankAccountDialogFragment().apply {
                 arguments = Bundle().apply {
                     putString(ACCOUNT_NAME_KEY, accountName)
                 }

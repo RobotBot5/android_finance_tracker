@@ -1,6 +1,6 @@
 package com.robotbot.financetracker.domain.repotisories
 
-import com.robotbot.financetracker.domain.entities.TransactionCategoryEntity
+import com.robotbot.financetracker.domain.entities.CategoryEntity
 
-interface CategoryRepository : CrudRepository<TransactionCategoryEntity> {
+interface CategoryRepository : CrudRepository<CategoryEntity> {
 }

@@ -7,7 +7,7 @@ import java.time.LocalDateTime
 data class TransactionEntity(
     val transactionType: TransactionType,
     val amount: BigDecimal,
-    val category: TransactionCategoryEntity,
+    val category: CategoryEntity,
     val date: LocalDateTime,
     var id: Int = UNDEFINED_ID
 )

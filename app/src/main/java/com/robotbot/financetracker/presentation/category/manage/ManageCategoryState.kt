@@ -1,6 +1,6 @@
 package com.robotbot.financetracker.presentation.category.manage
 
-import com.robotbot.financetracker.domain.entities.TransactionCategoryEntity
+import com.robotbot.financetracker.domain.entities.CategoryEntity
 
 data class ManageCategoryState(
     val displayState: ManageCategoryDisplayState,
@@ -10,7 +10,7 @@ data class ManageCategoryState(
 sealed interface ManageCategoryDisplayState {
     data object Initial : ManageCategoryDisplayState
 
-    data class InitialEditMode(val categoryEntity: TransactionCategoryEntity) :
+    data class InitialEditMode(val categoryEntity: CategoryEntity) :
         ManageCategoryDisplayState
 
     data class Content(

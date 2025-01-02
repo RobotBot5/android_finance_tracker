@@ -4,14 +4,14 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import com.robotbot.financetracker.databinding.ItemCategoryBinding
-import com.robotbot.financetracker.domain.entities.TransactionCategoryEntity
+import com.robotbot.financetracker.domain.entities.CategoryEntity
 import javax.inject.Inject
 
 class CategoryAdapter @Inject constructor() :
-    ListAdapter<TransactionCategoryEntity, CategoryViewHolder>(CategoryDiffCallback) {
+    ListAdapter<CategoryEntity, CategoryViewHolder>(CategoryDiffCallback) {
 
     var onAddButtonClickListener: (() -> Unit)? = null
-    var onCategoryClickListener: ((TransactionCategoryEntity) -> Unit)? = null
+    var onCategoryClickListener: ((CategoryEntity) -> Unit)? = null
 
     private companion object {
         const val VIEW_CATEGORY_TYPE = 0

@@ -28,7 +28,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class ManageBankAccountActivity : AppCompatActivity(),
-    DeleteAccountDialogFragment.DeleteAccountDialogListener {
+    DeleteBankAccountDialogFragment.DeleteAccountDialogListener {
 
     private val binding by lazy {
         ActivityManageBankAccountBinding.inflate(layoutInflater)
@@ -109,7 +109,7 @@ class ManageBankAccountActivity : AppCompatActivity(),
             btnDeleteAccount.setOnClickListener {
                 lifecycleScope.launch {
                     val accountName = viewModel.state.first().accountToDeleteName ?: return@launch
-                    DeleteAccountDialogFragment.newInstance(
+                    DeleteBankAccountDialogFragment.newInstance(
                         accountName = accountName
                     ).show(supportFragmentManager, "DELETE_ACCOUNT_DIALOG")
                 }
@@ -160,21 +160,21 @@ class ManageBankAccountActivity : AppCompatActivity(),
                     with(binding) {
                         tilAccountBalance.suffixText = it.selectedCurrency.toString()
                         when (it.displayState) {
-                            is AccountManagementDisplayState.Content -> {
+                            is ManageBankAccountDisplayState.Content -> {
                                 tilAccountName.error = it.displayState.nameError
                                 tilAccountBalance.error = it.displayState.balanceError
                             }
 
-                            is AccountManagementDisplayState.InitialEditMode -> {
+                            is ManageBankAccountDisplayState.InitialEditMode -> {
                                 etAccountName.setText(it.displayState.accountEntity.name)
                                 etAccountBalance.setText(it.displayState.accountEntity.balance.toPlainString())
                             }
 
-                            is AccountManagementDisplayState.Loading -> {
+                            is ManageBankAccountDisplayState.Loading -> {
 
                             }
 
-                            is AccountManagementDisplayState.WorkEnded -> {
+                            is ManageBankAccountDisplayState.WorkEnded -> {
                                 finish()
                             }
                         }

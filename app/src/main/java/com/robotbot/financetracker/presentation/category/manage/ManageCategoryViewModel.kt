@@ -3,7 +3,7 @@ package com.robotbot.financetracker.presentation.category.manage
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.robotbot.financetracker.domain.DomainConstants
-import com.robotbot.financetracker.domain.entities.TransactionCategoryEntity
+import com.robotbot.financetracker.domain.entities.CategoryEntity
 import com.robotbot.financetracker.domain.entities.TransactionType
 import com.robotbot.financetracker.domain.usecases.category.AddCategoryUseCase
 import com.robotbot.financetracker.domain.usecases.category.DeleteCategoryUseCase
@@ -42,7 +42,7 @@ class ManageCategoryViewModel @Inject constructor(
     private fun handleCategoryOperation(
         inputName: String,
         type: TransactionType,
-        operation: suspend (TransactionCategoryEntity) -> Unit
+        operation: suspend (CategoryEntity) -> Unit
     ) {
         val name = inputName.trim()
 
@@ -55,7 +55,7 @@ class ManageCategoryViewModel @Inject constructor(
 
         viewModelScope.launch {
             operation(
-                TransactionCategoryEntity(
+                CategoryEntity(
                     id = editCategoryId,
                     name = name,
                     transactionType = type
