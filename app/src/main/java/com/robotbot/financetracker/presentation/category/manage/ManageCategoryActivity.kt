@@ -7,6 +7,7 @@ import android.view.View.VISIBLE
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.res.use
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.widget.doOnTextChanged
@@ -17,6 +18,7 @@ import com.robotbot.financetracker.presentation.FinanceTrackerApp
 import com.robotbot.financetracker.R
 import com.robotbot.financetracker.databinding.ActivityManageCategoryBinding
 import com.robotbot.financetracker.domain.DomainConstants
+import com.robotbot.financetracker.domain.entities.CategoryIconEntity
 import com.robotbot.financetracker.domain.entities.TransactionType
 import com.robotbot.financetracker.presentation.ViewModelFactory
 import com.robotbot.financetracker.presentation.category.manage.icons_adapter.IconAdapter
@@ -61,6 +63,9 @@ class ManageCategoryActivity : AppCompatActivity(),
         observeViewModel()
         setListenersOnViews()
         launchRightMode()
+        iconsAdapter.onCategoryIconClickListener = {
+            viewModel.setSelectedCategoryIcon(it)
+        }
         binding.rvCategoryIcons.adapter = iconsAdapter
     }
 
@@ -82,6 +87,9 @@ class ManageCategoryActivity : AppCompatActivity(),
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.RESUMED) {
                 viewModel.state.collect {
+                    iconsAdapter.submitList(
+                        it.iconResIds
+                    )
                     with(binding) {
                         when (it.displayState) {
                             is ManageCategoryDisplayState.Initial -> {

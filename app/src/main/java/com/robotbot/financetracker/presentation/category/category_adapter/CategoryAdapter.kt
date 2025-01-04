@@ -41,6 +41,7 @@ class CategoryAdapter @Inject constructor() :
             val category = getItem(position)
             with(holder.binding) {
                 tvCategoryTitle.text = category.name
+                ivCategoryIcon.setImageResource(category.iconResId)
                 root.setOnClickListener {
                     onCategoryClickListener?.invoke(category)
                 }
@@ -52,6 +53,7 @@ class CategoryAdapter @Inject constructor() :
                 root.setOnClickListener {
                     onAddButtonClickListener?.invoke()
                 }
+                ivCategoryIcon.setImageResource(android.R.drawable.ic_menu_add)
             }
         }
     }

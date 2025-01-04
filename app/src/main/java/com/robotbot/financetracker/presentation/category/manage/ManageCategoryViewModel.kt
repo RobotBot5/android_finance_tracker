@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.robotbot.financetracker.R
 import com.robotbot.financetracker.domain.DomainConstants
 import com.robotbot.financetracker.domain.entities.CategoryEntity
+import com.robotbot.financetracker.domain.entities.CategoryIconEntity
 import com.robotbot.financetracker.domain.entities.TransactionType
 import com.robotbot.financetracker.domain.usecases.category.AddCategoryUseCase
 import com.robotbot.financetracker.domain.usecases.category.DeleteCategoryUseCase
@@ -28,12 +29,36 @@ class ManageCategoryViewModel @Inject constructor(
 
     private val _state = MutableStateFlow(
         ManageCategoryState(
-            displayState = ManageCategoryDisplayState.Initial
+            displayState = ManageCategoryDisplayState.Initial,
+            iconResIds = initialIconResIds()
         )
     )
     val state = _state.asStateFlow()
 
     private var editCategoryIdOrUndefined: Int = DomainConstants.UNDEFINED_ID
+
+    private fun initialIconResIds(): List<CategoryIconEntity> {
+        return application.resources.obtainTypedArray(R.array.category_icons)
+            .use { array ->
+                List(array.length()) {
+                    val iconResId = array.getResourceId(it, 0)
+                    CategoryIconEntity(
+                        iconResId = iconResId,
+                        isSelected = it == 0
+                    )
+                }
+            }
+    }
+
+    fun setSelectedCategoryIcon(iconResId: Int) {
+        _state.update { state ->
+            state.copy(
+                iconResIds = state.iconResIds.map {
+                    it.copy(isSelected = it.iconResId == iconResId)
+                }
+            )
+        }
+    }
 
     fun editCategory(inputName: String, type: TransactionType) {
         handleCategoryOperation(inputName, type) { category ->
@@ -79,7 +104,7 @@ class ManageCategoryViewModel @Inject constructor(
                     id = editCategoryIdOrUndefined,
                     name = name,
                     transactionType = type,
-                    iconResId = R.drawable.ic_category_shopping_cart
+                    iconResId = _state.value.iconResIds.find { it.isSelected }?.iconResId ?: throw RuntimeException("")
                 )
             )
             _state.update {
@@ -105,6 +130,7 @@ class ManageCategoryViewModel @Inject constructor(
     fun setupEditCategoryById(categoryId: Int) {
         viewModelScope.launch {
             val categoryEntity = getCategoryUseCase(categoryId)
+            setSelectedCategoryIcon(categoryEntity.iconResId)
             editCategoryIdOrUndefined = categoryEntity.id
             _state.update {
                 it.copy(
