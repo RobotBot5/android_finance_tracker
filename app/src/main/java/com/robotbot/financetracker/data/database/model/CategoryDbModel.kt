@@ -10,5 +10,5 @@ data class CategoryDbModel(
     val id: Int,
     val transactionType: TransactionType,
     val name: String,
-    val iconResId: Int,
+    val iconResName: String,
 )

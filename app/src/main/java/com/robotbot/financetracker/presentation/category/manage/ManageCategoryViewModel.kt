@@ -99,12 +99,14 @@ class ManageCategoryViewModel @Inject constructor(
         }
 
         viewModelScope.launch {
+            val iconResId = _state.value.iconResIds.find { it.isSelected }?.iconResId ?: throw RuntimeException("")
+            val iconResName = application.resources.getResourceEntryName(iconResId)
             operation(
                 CategoryEntity(
                     id = editCategoryIdOrUndefined,
                     name = name,
                     transactionType = type,
-                    iconResId = _state.value.iconResIds.find { it.isSelected }?.iconResId ?: throw RuntimeException("")
+                    iconResName = iconResName
                 )
             )
             _state.update {
@@ -130,7 +132,8 @@ class ManageCategoryViewModel @Inject constructor(
     fun setupEditCategoryById(categoryId: Int) {
         viewModelScope.launch {
             val categoryEntity = getCategoryUseCase(categoryId)
-            setSelectedCategoryIcon(categoryEntity.iconResId)
+            val resourceId = application.resources.getIdentifier(categoryEntity.iconResName, "drawable", application.packageName)
+            setSelectedCategoryIcon(resourceId)
             editCategoryIdOrUndefined = categoryEntity.id
             _state.update {
                 it.copy(

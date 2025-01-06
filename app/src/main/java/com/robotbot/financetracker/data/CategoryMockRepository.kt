@@ -60,14 +60,14 @@ object CategoryMockRepository : CategoryRepository {
     private fun loadData(): MutableList<CategoryEntity> {
         val categoriesList = mutableListOf<CategoryEntity>()
         for (i in 1..10) {
-            categoriesList.add(
-                CategoryEntity(
-                    id = i,
-                    transactionType = TransactionType.INCOME,
-                    name = "Name: $i",
-                    iconResId = R.drawable.ic_category_shopping_cart
-                )
-            )
+//            categoriesList.add(
+//                CategoryEntity(
+//                    id = i,
+//                    transactionType = TransactionType.INCOME,
+//                    name = "Name: $i",
+//                    iconResName = R.drawable.ic_category_shopping_cart
+//                )
+//            )
         }
         return categoriesList
     }

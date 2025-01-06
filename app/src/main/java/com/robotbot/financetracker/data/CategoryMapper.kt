@@ -10,14 +10,14 @@ class CategoryMapper @Inject constructor() {
         id = categoryEntity.id,
         transactionType = categoryEntity.transactionType,
         name = categoryEntity.name,
-        iconResId = categoryEntity.iconResId
+        iconResName = categoryEntity.iconResName
     )
 
     fun mapDbModelToEntity(categoryDbModel: CategoryDbModel): CategoryEntity = CategoryEntity(
         id = categoryDbModel.id,
         transactionType = categoryDbModel.transactionType,
         name = categoryDbModel.name,
-        iconResId = categoryDbModel.iconResId
+        iconResName = categoryDbModel.iconResName
     )
 
     fun mapListDbModelToListEntity(list: List<CategoryDbModel>): List<CategoryEntity> = list.map {

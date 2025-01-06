@@ -1,5 +1,6 @@
 package com.robotbot.financetracker.presentation.category.category_adapter
 
+import android.app.Application
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
@@ -8,7 +9,7 @@ import com.robotbot.financetracker.databinding.ItemCategoryBinding
 import com.robotbot.financetracker.domain.entities.CategoryEntity
 import javax.inject.Inject
 
-class CategoryAdapter @Inject constructor() :
+class CategoryAdapter @Inject constructor(private val application: Application) :
     ListAdapter<CategoryEntity, CategoryViewHolder>(CategoryDiffCallback) {
 
     var onAddButtonClickListener: (() -> Unit)? = null
@@ -41,7 +42,8 @@ class CategoryAdapter @Inject constructor() :
             val category = getItem(position)
             with(holder.binding) {
                 tvCategoryTitle.text = category.name
-                ivCategoryIcon.setImageResource(category.iconResId)
+                val iconResId = application.resources.getIdentifier(category.iconResName, "drawable", application.packageName)
+                ivCategoryIcon.setImageResource(iconResId)
                 root.setOnClickListener {
                     onCategoryClickListener?.invoke(category)
                 }
