@@ -55,4 +55,8 @@ dependencies {
     ksp(libs.dagger2.android.processor)
 
     implementation(libs.viewModel)
+
+    implementation(libs.androidx.room.runtime)
+    ksp(libs.androidx.room.compiler)
+    implementation(libs.androidx.room.ktx)
 }
