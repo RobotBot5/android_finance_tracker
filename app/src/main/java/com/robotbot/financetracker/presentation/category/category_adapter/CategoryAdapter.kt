@@ -1,6 +1,7 @@
 package com.robotbot.financetracker.presentation.category.category_adapter
 
 import android.app.Application
+import android.net.Uri
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
@@ -42,8 +43,9 @@ class CategoryAdapter @Inject constructor(private val application: Application) 
             val category = getItem(position)
             with(holder.binding) {
                 tvCategoryTitle.text = category.name
-                val iconResId = application.resources.getIdentifier(category.iconResName, "drawable", application.packageName)
-                ivCategoryIcon.setImageResource(iconResId)
+                val uri = Uri.parse("android.resource://${application.packageName}/drawable/${category.iconResName}")
+                ivCategoryIcon.setImageURI(uri)
+
                 root.setOnClickListener {
                     onCategoryClickListener?.invoke(category)
                 }
