@@ -1,4 +1,4 @@
-package com.robotbot.financetracker.data
+package com.robotbot.financetracker.data.mapper
 
 import com.robotbot.financetracker.data.database.model.CategoryDbModel
 import com.robotbot.financetracker.domain.entities.CategoryEntity

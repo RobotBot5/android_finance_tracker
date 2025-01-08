@@ -1,6 +1,7 @@
-package com.robotbot.financetracker.data
+package com.robotbot.financetracker.data.repository
 
-import com.robotbot.financetracker.data.database.CategoryDao
+import com.robotbot.financetracker.data.mapper.CategoryMapper
+import com.robotbot.financetracker.data.database.dao.CategoryDao
 import com.robotbot.financetracker.di.ApplicationScope
 import com.robotbot.financetracker.domain.entities.CategoryEntity
 import com.robotbot.financetracker.domain.repotisories.CategoryRepository

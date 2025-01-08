@@ -1,4 +1,4 @@
-package com.robotbot.financetracker.data.database
+package com.robotbot.financetracker.data.database.dao
 
 import androidx.room.Dao
 import androidx.room.Insert

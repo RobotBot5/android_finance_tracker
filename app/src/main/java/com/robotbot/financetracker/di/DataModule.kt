@@ -1,12 +1,11 @@
 package com.robotbot.financetracker.di
 
 import android.app.Application
-import android.content.Context
-import com.robotbot.financetracker.data.BankAccountMockRepository
-import com.robotbot.financetracker.data.CategoryMockRepository
-import com.robotbot.financetracker.data.CategoryRepositoryImpl
+import com.robotbot.financetracker.data.repository.BankAccountMockRepository
+import com.robotbot.financetracker.data.repository.CategoryMockRepository
+import com.robotbot.financetracker.data.repository.CategoryRepositoryImpl
 import com.robotbot.financetracker.data.database.AppDatabase
-import com.robotbot.financetracker.data.database.CategoryDao
+import com.robotbot.financetracker.data.database.dao.CategoryDao
 import com.robotbot.financetracker.domain.repotisories.BankAccountRepository
 import com.robotbot.financetracker.domain.repotisories.CategoryRepository
 import dagger.Binds

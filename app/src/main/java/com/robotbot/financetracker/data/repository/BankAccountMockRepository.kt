@@ -1,4 +1,4 @@
-package com.robotbot.financetracker.data
+package com.robotbot.financetracker.data.repository
 
 import com.robotbot.financetracker.domain.DomainConstants
 import com.robotbot.financetracker.domain.entities.BankAccountEntity
