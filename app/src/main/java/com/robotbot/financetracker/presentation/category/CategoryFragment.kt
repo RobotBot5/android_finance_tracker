@@ -4,10 +4,14 @@ import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.robotbot.financetracker.presentation.FinanceTrackerApp
 import com.robotbot.financetracker.databinding.FragmentCategoryBinding
 import com.robotbot.financetracker.presentation.ViewModelFactory
@@ -52,6 +56,7 @@ class CategoryFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         viewModel = ViewModelProvider(this, viewModelFactory)[CategoryViewModel::class.java]
         setupRecyclerView()
+        observeViewModel()
     }
 
     private fun setupRecyclerView() {
@@ -66,9 +71,25 @@ class CategoryFragment : Fragment() {
             }
         }
         binding.rvCategories.adapter = categoryAdapter
+    }
+
+    private fun observeViewModel() {
         lifecycleScope.launch {
-            viewModel.categories.collect {
-                categoryAdapter.submitList(it)
+            repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                viewModel.state.collect {
+                    binding.pbCategories.visibility = GONE
+                    binding.rvCategories.visibility = GONE
+                    when (it.displayState) {
+                        CategoryDisplayState.Initial -> {  }
+                        CategoryDisplayState.Loading -> {
+                            binding.pbCategories.visibility = VISIBLE
+                        }
+                        is CategoryDisplayState.Content -> {
+                            categoryAdapter.submitList(it.displayState.categories)
+                            binding.rvCategories.visibility = VISIBLE
+                        }
+                    }
+                }
             }
         }
     }

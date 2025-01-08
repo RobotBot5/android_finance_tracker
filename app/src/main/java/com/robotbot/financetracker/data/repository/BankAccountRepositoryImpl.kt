@@ -5,8 +5,10 @@ import com.robotbot.financetracker.data.mapper.BankAccountMapper
 import com.robotbot.financetracker.di.ApplicationScope
 import com.robotbot.financetracker.domain.entities.BankAccountEntity
 import com.robotbot.financetracker.domain.repotisories.BankAccountRepository
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
 
 @ApplicationScope
@@ -20,7 +22,8 @@ class BankAccountRepositoryImpl @Inject constructor(
     }
 
     override fun getAll(): Flow<List<BankAccountEntity>> {
-        return bankAccountDao.getAccounts().map { mapper.mapListDbModelToListEntity(it) }
+        return bankAccountDao.getAccounts()
+            .map { mapper.mapListDbModelToListEntity(it) }
     }
 
     override suspend fun create(entity: BankAccountEntity) {

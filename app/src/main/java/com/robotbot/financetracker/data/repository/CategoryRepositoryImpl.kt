@@ -5,8 +5,10 @@ import com.robotbot.financetracker.data.database.dao.CategoryDao
 import com.robotbot.financetracker.di.ApplicationScope
 import com.robotbot.financetracker.domain.entities.CategoryEntity
 import com.robotbot.financetracker.domain.repotisories.CategoryRepository
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
 
 @ApplicationScope
@@ -20,7 +22,9 @@ class CategoryRepositoryImpl @Inject constructor(
     }
 
     override fun getAll(): Flow<List<CategoryEntity>> {
-        return categoryDao.getCategories().map { mapper.mapListDbModelToListEntity(it) }
+        return categoryDao.getCategories()
+            .onEach { delay(3000) }
+            .map { mapper.mapListDbModelToListEntity(it) }
     }
 
     override suspend fun create(entity: CategoryEntity) {
