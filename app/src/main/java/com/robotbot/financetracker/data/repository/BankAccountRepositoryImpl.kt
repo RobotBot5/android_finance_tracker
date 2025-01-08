@@ -2,6 +2,7 @@ package com.robotbot.financetracker.data.repository
 
 import com.robotbot.financetracker.data.database.dao.BankAccountDao
 import com.robotbot.financetracker.data.mapper.BankAccountMapper
+import com.robotbot.financetracker.data.network.ApiService
 import com.robotbot.financetracker.di.ApplicationScope
 import com.robotbot.financetracker.domain.entities.BankAccountEntity
 import com.robotbot.financetracker.domain.repotisories.BankAccountRepository
@@ -14,8 +15,18 @@ import javax.inject.Inject
 @ApplicationScope
 class BankAccountRepositoryImpl @Inject constructor(
     private val bankAccountDao: BankAccountDao,
-    private val mapper: BankAccountMapper
+    private val mapper: BankAccountMapper,
+    private val apiService: ApiService
 ) : BankAccountRepository {
+
+    override suspend fun getPrices(): Map<String, String> {
+        val response = apiService.getCoinPrices()
+        return mapOf(
+            "BTC" to response.btc.rub,
+            "EUR" to response.eur.rub,
+            "USD" to response.usd.rub
+        )
+    }
 
     override suspend fun getById(id: Int): BankAccountEntity {
         return mapper.mapDbModelToEntity(bankAccountDao.getAccountById(id))
