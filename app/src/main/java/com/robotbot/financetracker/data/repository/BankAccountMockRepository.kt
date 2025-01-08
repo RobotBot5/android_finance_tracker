@@ -14,9 +14,6 @@ object BankAccountMockRepository : BankAccountRepository {
     private val accounts = loadData()
 
     private val refreshEvents = MutableSharedFlow<Unit>()
-    override suspend fun getPrices(): Map<String, String> {
-        TODO("Not yet implemented")
-    }
 
     override suspend fun getById(id: Int): BankAccountEntity {
         return accounts.find {

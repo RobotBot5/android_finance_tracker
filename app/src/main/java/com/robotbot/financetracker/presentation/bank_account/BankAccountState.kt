@@ -9,5 +9,8 @@ data class BankAccountState(
 sealed interface BankAccountDisplayState {
     data object Initial : BankAccountDisplayState
     data object Loading : BankAccountDisplayState
-    data class Content(val accounts: List<BankAccountEntity>) : BankAccountDisplayState
+    data class Content(
+        val accounts: List<BankAccountEntity>,
+        val totalBalance: Double
+    ) : BankAccountDisplayState
 }

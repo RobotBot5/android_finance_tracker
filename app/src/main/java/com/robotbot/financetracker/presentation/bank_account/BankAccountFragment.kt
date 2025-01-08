@@ -91,6 +91,7 @@ class BankAccountFragment : Fragment() {
                         }
                         is BankAccountDisplayState.Content -> {
                             bankAccountsAdapter.submitList(it.displayState.accounts)
+                            binding.tvTotalBalance.text = "${it.displayState.totalBalance} руб."
                         }
                     }
                 }

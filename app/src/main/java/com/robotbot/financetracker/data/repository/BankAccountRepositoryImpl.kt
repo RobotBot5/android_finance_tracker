@@ -15,18 +15,8 @@ import javax.inject.Inject
 @ApplicationScope
 class BankAccountRepositoryImpl @Inject constructor(
     private val bankAccountDao: BankAccountDao,
-    private val mapper: BankAccountMapper,
-    private val apiService: ApiService
+    private val mapper: BankAccountMapper
 ) : BankAccountRepository {
-
-    override suspend fun getPrices(): Map<String, String> {
-        val response = apiService.getCoinPrices()
-        return mapOf(
-            "BTC" to response.btc.rub,
-            "EUR" to response.eur.rub,
-            "USD" to response.usd.rub
-        )
-    }
 
     override suspend fun getById(id: Int): BankAccountEntity {
         return mapper.mapDbModelToEntity(bankAccountDao.getAccountById(id))
