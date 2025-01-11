@@ -5,13 +5,16 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
+import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.google.android.material.snackbar.Snackbar
 import com.robotbot.financetracker.presentation.FinanceTrackerApp
 import com.robotbot.financetracker.databinding.FragmentBankAccountsBinding
 import com.robotbot.financetracker.presentation.ViewModelFactory
@@ -84,14 +87,42 @@ class BankAccountFragment : Fragment() {
             repeatOnLifecycle(Lifecycle.State.RESUMED) {
                 viewModel.state.collect {
                     binding.pbBankAccounts.visibility = GONE
-                    when (it.displayState) {
-                        BankAccountDisplayState.Initial -> {  }
-                        BankAccountDisplayState.Loading -> {
+                    when (it.bankAccountListState) {
+                        BankAccountListState.Initial -> {  }
+                        BankAccountListState.Loading -> {
                             binding.pbBankAccounts.visibility = VISIBLE
                         }
-                        is BankAccountDisplayState.Content -> {
-                            bankAccountsAdapter.submitList(it.displayState.accounts)
-                            binding.tvTotalBalance.text = "${it.displayState.totalBalance} руб."
+                        is BankAccountListState.Content -> {
+                            bankAccountsAdapter.submitList(it.bankAccountListState.accounts)
+                        }
+                    }
+                    when (it.totalBalanceState) {
+                        TotalBalanceState.Initial -> {}
+                        TotalBalanceState.Loading -> {
+                            binding.sflBalance.visibility = VISIBLE
+                            binding.sflBalance.startShimmer()
+                            binding.tvTotalBalance.visibility = INVISIBLE
+                        }
+                        is TotalBalanceState.Content -> {
+                            binding.sflBalance.stopShimmer()
+                            binding.sflBalance.visibility = GONE
+                            binding.tvTotalBalance.visibility = VISIBLE
+                            binding.tvTotalBalance.text = "${it.totalBalanceState.totalBalance} руб."
+                        }
+                        TotalBalanceState.Error -> {
+                            binding.sflBalance.stopShimmer()
+                            binding.sflBalance.visibility = GONE
+                            binding.tvTotalBalance.visibility = VISIBLE
+                            binding.tvTotalBalance.text = "Error"
+                            Snackbar.make(
+                                binding.clMain,
+                                "Failed to load exchange rates. Please check your internet connection.",
+                                Snackbar.LENGTH_INDEFINITE
+                            )
+                                .setAction("Retry") {
+                                    viewModel.retryLoadBalance()
+                                }
+                                .show()
                         }
                     }
                 }

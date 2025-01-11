@@ -2,6 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cl_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingHorizontal="16dp">
@@ -33,16 +34,34 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
+            <com.facebook.shimmer.ShimmerFrameLayout
+                android:id="@+id/sfl_balance"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:layout_constraintBottom_toBottomOf="@+id/tv_total_balance"
+                app:layout_constraintEnd_toEndOf="@+id/tv_total_balance"
+                app:layout_constraintStart_toStartOf="@+id/tv_total_balance"
+                app:layout_constraintTop_toTopOf="@+id/tv_total_balance"
+                app:shimmer_auto_start="true"
+                app:shimmer_duration="1500">
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/bg_rounded_rectangle" />
+
+            </com.facebook.shimmer.ShimmerFrameLayout>
+
             <TextView
                 android:id="@+id/tv_total_balance"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:text="$200.000"
                 android:textColor="@color/white"
                 android:textSize="24sp"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tv_total_balance_label"
-                tools:text="$200.000" />
+                app:layout_constraintTop_toBottomOf="@+id/tv_total_balance_label" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_transfer"

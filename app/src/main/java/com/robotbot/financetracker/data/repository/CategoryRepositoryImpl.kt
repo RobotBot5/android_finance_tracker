@@ -23,7 +23,6 @@ class CategoryRepositoryImpl @Inject constructor(
 
     override fun getAll(): Flow<List<CategoryEntity>> {
         return categoryDao.getCategories()
-            .onEach { delay(3000) }
             .map { mapper.mapListDbModelToListEntity(it) }
     }
 
