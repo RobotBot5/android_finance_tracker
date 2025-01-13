@@ -5,11 +5,11 @@
         android:icon="@drawable/ic_menu_home"
         android:title="Home" />
     <item
-        android:id="@+id/nav_accounts"
+        android:id="@+id/bank_accounts_fragment"
         android:icon="@drawable/ic_menu_accounts"
         android:title="Accounts" />
     <item
-        android:id="@+id/nav_categories"
+        android:id="@+id/category_fragment"
         android:icon="@drawable/ic_menu_categories"
         android:title="Categories" />
     <item

@@ -8,16 +8,20 @@ import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.robotbot.financetracker.databinding.FragmentManageCategoryBinding
 import com.robotbot.financetracker.domain.DomainConstants
 import com.robotbot.financetracker.domain.entities.TransactionType
 import com.robotbot.financetracker.presentation.FinanceTrackerApp
 import com.robotbot.financetracker.presentation.ViewModelFactory
 import com.robotbot.financetracker.presentation.category.manage.icons_adapter.IconAdapter
+import com.robotbot.financetracker.presentation.navigation.ManageMode
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -36,27 +40,14 @@ class ManageCategoryFragment : Fragment() {
 
     private lateinit var viewModel: ManageCategoryViewModel
 
-    private lateinit var onWorkEndedListener: OnWorkEndedListener
-
-    interface OnWorkEndedListener {
-        fun onWorkEndedListener()
-    }
-
     @Inject
     lateinit var iconsAdapter: IconAdapter
 
-    private var screenMode: String = MODE_UNDEFINED
-
-    private var categoryId: Int = DomainConstants.UNDEFINED_ID
+    private val args by navArgs<ManageCategoryFragmentArgs>()
 
     override fun onAttach(context: Context) {
         component.inject(this)
         super.onAttach(context)
-        if (context is OnWorkEndedListener) {
-            onWorkEndedListener = context
-        } else {
-            throw RuntimeException("Activity must implement OnWorkEndedListener")
-        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -65,20 +56,10 @@ class ManageCategoryFragment : Fragment() {
     }
 
     private fun parseParams() {
-        val args = requireArguments()
-        if (!args.containsKey(SCREEN_MODE)) {
-            throw RuntimeException("Screen mode param is absent")
-        }
-        val mode = args.getString(SCREEN_MODE)
-        if (mode != MODE_ADD && mode != MODE_EDIT) {
-            throw RuntimeException("Unknown screen mode $mode")
-        }
-        screenMode = mode
-        if (screenMode == MODE_EDIT) {
-            if (!args.containsKey(CATEGORY_ID)) {
+        if (args.mode == ManageMode.EDIT) {
+            if (args.categoryId == DomainConstants.UNDEFINED_ID) {
                 throw RuntimeException("Category id param is absent")
             }
-            categoryId = args.getInt(CATEGORY_ID, DomainConstants.UNDEFINED_ID)
         }
     }
 
@@ -128,7 +109,7 @@ class ManageCategoryFragment : Fragment() {
                             }
 
                             ManageCategoryDisplayState.WorkEnded -> {
-                                onWorkEndedListener.onWorkEndedListener()
+                                findNavController().popBackStack()
                             }
                         }
                     }
@@ -146,31 +127,32 @@ class ManageCategoryFragment : Fragment() {
     }
 
     private fun launchRightMode() {
-        when (screenMode) {
-            MODE_EDIT -> launchEditMode()
-            MODE_ADD -> launchAddMode()
+        when (args.mode) {
+            ManageMode.ADD -> launchAddMode()
+            ManageMode.EDIT -> launchEditMode()
         }
     }
 
     private fun launchEditMode() {
-        viewModel.setupEditCategoryById(categoryId)
+        viewModel.setupEditCategoryById(args.categoryId)
         with(binding) {
             btnDeleteCategory.visibility = VISIBLE
             btnDeleteCategory.setOnClickListener {
                 lifecycleScope.launch {
                     val categoryName = viewModel.state.value.categoryToDeleteName ?: return@launch
-                    parentFragmentManager.setFragmentResultListener(
+                    findNavController().navigate(
+                        ManageCategoryFragmentDirections.actionManageCategoryFragmentToDeleteCategoryDialogFragment(
+                            categoryName
+                        )
+                    )
+                    setFragmentResultListener(
                         DeleteCategoryDialogFragment.REQUEST_KEY,
-                        viewLifecycleOwner
                     ) { _, bundle ->
                         val confirmed = bundle.getBoolean(DeleteCategoryDialogFragment.RESULT_KEY)
                         if (confirmed) {
                             viewModel.deleteCategory()
                         }
                     }
-                    DeleteCategoryDialogFragment.newInstance(
-                        categoryName = categoryName
-                    ).show(parentFragmentManager, "DELETE_CATEGORY_DIALOG")
                 }
             }
             btnSaveCategory.setOnClickListener {
@@ -206,31 +188,5 @@ class ManageCategoryFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-    }
-
-    companion object {
-
-        private const val SCREEN_MODE = "screen_mode"
-        private const val MODE_ADD = "add_mode"
-        private const val MODE_EDIT = "edit_mode"
-        private const val MODE_UNDEFINED = ""
-        private const val CATEGORY_ID = "category_id"
-
-        fun newInstanceAddCategory(): ManageCategoryFragment {
-            return ManageCategoryFragment().apply {
-                arguments = Bundle().apply {
-                    putString(SCREEN_MODE, MODE_ADD)
-                }
-            }
-        }
-
-        fun newInstanceEditCategory(categoryId: Int): ManageCategoryFragment {
-            return ManageCategoryFragment().apply {
-                arguments = Bundle().apply {
-                    putString(SCREEN_MODE, MODE_EDIT)
-                    putInt(CATEGORY_ID, categoryId)
-                }
-            }
-        }
     }
 }

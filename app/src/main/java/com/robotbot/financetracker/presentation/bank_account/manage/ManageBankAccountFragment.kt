@@ -11,15 +11,19 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.robotbot.financetracker.databinding.FragmentManageBankAccountBinding
 import com.robotbot.financetracker.domain.DomainConstants
 import com.robotbot.financetracker.domain.entities.Currency
 import com.robotbot.financetracker.presentation.FinanceTrackerApp
 import com.robotbot.financetracker.presentation.ViewModelFactory
+import com.robotbot.financetracker.presentation.navigation.ManageMode
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -38,24 +42,11 @@ class ManageBankAccountFragment : Fragment() {
 
     private lateinit var viewModel: ManageBankAccountViewModel
 
-    private lateinit var onWorkEndedListener: OnWorkEndedListener
-
-    interface OnWorkEndedListener {
-        fun onWorkEndedListener()
-    }
-
-    private var screenMode: String = MODE_UNDEFINED
-
-    private var accountId: Int = DomainConstants.UNDEFINED_ID
+    private val args by navArgs<ManageBankAccountFragmentArgs>()
 
     override fun onAttach(context: Context) {
         component.inject(this)
         super.onAttach(context)
-        if (context is OnWorkEndedListener) {
-            onWorkEndedListener = context
-        } else {
-            throw RuntimeException("Activity must implement OnWorkEndedListener")
-        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -64,20 +55,10 @@ class ManageBankAccountFragment : Fragment() {
     }
 
     private fun parseParams() {
-        val args = requireArguments()
-        if (!args.containsKey(SCREEN_MODE)) {
-            throw RuntimeException("Screen mode param is absent")
-        }
-        val mode = args.getString(SCREEN_MODE)
-        if (mode != MODE_ADD && mode != MODE_EDIT) {
-            throw RuntimeException("Unknown screen mode $mode")
-        }
-        screenMode = mode
-        if (screenMode == MODE_EDIT) {
-            if (!args.containsKey(ACCOUNT_ID)) {
+        if (args.mode == ManageMode.EDIT) {
+            if (args.accountId == DomainConstants.UNDEFINED_ID) {
                 throw RuntimeException("Account id param is absent")
             }
-            accountId = args.getInt(ACCOUNT_ID, DomainConstants.UNDEFINED_ID)
         }
     }
 
@@ -92,7 +73,8 @@ class ManageBankAccountFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel = ViewModelProvider(this, viewModelFactory)[ManageBankAccountViewModel::class.java]
+        viewModel =
+            ViewModelProvider(this, viewModelFactory)[ManageBankAccountViewModel::class.java]
         // TODO: Replace temporary spnCurrency logic with a recycler view (mb on another activity/fragment)
         binding.spnCurrency.adapter = ArrayAdapter(
             requireContext(),
@@ -126,6 +108,7 @@ class ManageBankAccountFragment : Fragment() {
                         when (it.displayState) {
                             ManageBankAccountDisplayState.Initial -> {
                             }
+
                             is ManageBankAccountDisplayState.Content -> {
                                 tilAccountName.error = it.displayState.nameError
                                 tilAccountBalance.error = it.displayState.balanceError
@@ -141,7 +124,7 @@ class ManageBankAccountFragment : Fragment() {
                             }
 
                             is ManageBankAccountDisplayState.WorkEnded -> {
-                                onWorkEndedListener.onWorkEndedListener()
+                                findNavController().popBackStack()
                             }
                         }
                     }
@@ -162,16 +145,16 @@ class ManageBankAccountFragment : Fragment() {
     }
 
     private fun launchRightMode() {
-        when (screenMode) {
-            MODE_EDIT -> launchEditMode()
-            MODE_ADD -> launchAddMode()
+        when (args.mode) {
+            ManageMode.ADD -> launchAddMode()
+            ManageMode.EDIT -> launchEditMode()
         }
     }
 
     private fun launchEditMode() {
         binding.spnCurrency.visibility = GONE
         binding.btnDeleteAccount.visibility = VISIBLE
-        viewModel.setupAccountToEditById(accountId)
+        viewModel.setupAccountToEditById(args.accountId)
         with(binding) {
             btnSaveAccount.setOnClickListener {
                 viewModel.editAccount(
@@ -182,18 +165,18 @@ class ManageBankAccountFragment : Fragment() {
             btnDeleteAccount.setOnClickListener {
                 lifecycleScope.launch {
                     val accountName = viewModel.state.value.accountToDeleteName ?: return@launch
-                    parentFragmentManager.setFragmentResultListener(
-                        DeleteBankAccountDialogFragment.REQUEST_KEY,
-                        viewLifecycleOwner
-                    ) { _, bundle ->
-                        val confirmed = bundle.getBoolean(DeleteBankAccountDialogFragment.RESULT_KEY)
+                    findNavController().navigate(
+                        ManageBankAccountFragmentDirections.actionManageBankAccountFragmentToDeleteBankAccountDialogFragment(
+                            accountName
+                        )
+                    )
+                    setFragmentResultListener(DeleteBankAccountDialogFragment.REQUEST_KEY) { _, bundle ->
+                        val confirmed =
+                            bundle.getBoolean(DeleteBankAccountDialogFragment.RESULT_KEY)
                         if (confirmed) {
                             viewModel.deleteAccount()
                         }
                     }
-                    DeleteBankAccountDialogFragment.newInstance(
-                        accountName = accountName
-                    ).show(parentFragmentManager, "DELETE_ACCOUNT_DIALOG")
                 }
             }
         }
@@ -213,32 +196,6 @@ class ManageBankAccountFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-    }
-
-    companion object {
-
-        private const val SCREEN_MODE = "screen_mode"
-        private const val MODE_ADD = "add_mode"
-        private const val MODE_EDIT = "edit_mode"
-        private const val MODE_UNDEFINED = ""
-        private const val ACCOUNT_ID = "category_id"
-
-        fun newInstanceAddAccount(): ManageBankAccountFragment {
-            return ManageBankAccountFragment().apply {
-                arguments = Bundle().apply {
-                    putString(SCREEN_MODE, MODE_ADD)
-                }
-            }
-        }
-
-        fun newInstanceEditAccount(accountId: Int): ManageBankAccountFragment {
-            return ManageBankAccountFragment().apply {
-                arguments = Bundle().apply {
-                    putString(SCREEN_MODE, MODE_EDIT)
-                    putInt(ACCOUNT_ID, accountId)
-                }
-            }
-        }
     }
 
 }

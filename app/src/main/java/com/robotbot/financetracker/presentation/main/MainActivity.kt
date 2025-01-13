@@ -1,15 +1,16 @@
 package com.robotbot.financetracker.presentation.main
 
 import android.os.Bundle
+import android.view.View
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.setupWithNavController
 import com.robotbot.financetracker.R
 import com.robotbot.financetracker.databinding.ActivityMainBinding
-import com.robotbot.financetracker.presentation.bank_account.BankAccountFragment
-import com.robotbot.financetracker.presentation.category.CategoryFragment
 
 class MainActivity : AppCompatActivity() {
 
@@ -26,32 +27,24 @@ class MainActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, 0)
             insets
         }
-        binding.bottomNavigation.setOnItemSelectedListener {
-            when (it.itemId) {
-                R.id.nav_home -> {
-//                    loadFragment(HomeFragment())
-                    true
+        val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+        val navController = navHostFragment.navController
+        binding.bottomNavigation.setupWithNavController(navController)
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            when (destination.id) {
+                R.id.category_fragment, R.id.bank_accounts_fragment -> {
+                    binding.bottomNavigation.visibility = View.VISIBLE
                 }
-                R.id.nav_profile -> {
-//                    loadFragment(ProfileFragment())
-                    true
+                else -> {
+                    binding.bottomNavigation.visibility = View.GONE
                 }
-                R.id.nav_accounts -> {
-                    loadFragment(BankAccountFragment.newInstance())
-                    true
-                }
-                R.id.nav_categories -> {
-                    loadFragment(CategoryFragment.newInstance())
-                    true
-                }
-                else -> false
             }
         }
     }
 
     private fun loadFragment(fragment: Fragment) {
         supportFragmentManager.beginTransaction()
-            .replace(R.id.content_frame, fragment)
+            .replace(R.id.nav_host_fragment, fragment)
             .commit()
     }
 }

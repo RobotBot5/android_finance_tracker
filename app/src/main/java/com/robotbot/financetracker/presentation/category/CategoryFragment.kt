@@ -12,11 +12,12 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import com.robotbot.financetracker.presentation.FinanceTrackerApp
 import com.robotbot.financetracker.databinding.FragmentCategoryBinding
 import com.robotbot.financetracker.presentation.ViewModelFactory
 import com.robotbot.financetracker.presentation.category.category_adapter.CategoryAdapter
-import com.robotbot.financetracker.presentation.category.manage.ManageCategoryActivity
+import com.robotbot.financetracker.presentation.navigation.ManageMode
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -61,14 +62,20 @@ class CategoryFragment : Fragment() {
 
     private fun setupRecyclerView() {
         categoryAdapter.onAddButtonClickListener = {
-            ManageCategoryActivity.newIntentAddMode(requireContext()).apply {
-                startActivity(this)
-            }
+            findNavController().navigate(
+                CategoryFragmentDirections.actionCategoryFragmentToManageCategoryFragment(
+                    ManageMode.ADD
+                )
+            )
         }
         categoryAdapter.onCategoryClickListener = {
-            ManageCategoryActivity.newIntentEditMode(requireContext(), it.id).apply {
-                startActivity(this)
-            }
+            findNavController().navigate(
+                CategoryFragmentDirections.actionCategoryFragmentToManageCategoryFragment(
+                    ManageMode.EDIT
+                ).apply {
+                    categoryId = it.id
+                }
+            )
         }
         binding.rvCategories.adapter = categoryAdapter
     }
@@ -97,12 +104,5 @@ class CategoryFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-    }
-
-    companion object {
-
-        fun newInstance(): CategoryFragment {
-            return CategoryFragment()
-        }
     }
 }

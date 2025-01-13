@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main_navigation"
+    app:startDestination="@id/bank_accounts_fragment">
+
+    <fragment
+        android:id="@+id/bank_accounts_fragment"
+        android:name="com.robotbot.financetracker.presentation.bank_account.BankAccountFragment"
+        android:label="BankAccountFragment" >
+        <action
+            android:id="@+id/action_bank_accounts_fragment_to_manageBankAccountFragment"
+            app:destination="@id/manage_bank_account_fragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/category_fragment"
+        android:name="com.robotbot.financetracker.presentation.category.CategoryFragment"
+        android:label="CategoryFragment" >
+        <action
+            android:id="@+id/action_category_fragment_to_manageCategoryFragment"
+            app:destination="@id/manageCategoryFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/manage_bank_account_fragment"
+        android:name="com.robotbot.financetracker.presentation.bank_account.manage.ManageBankAccountFragment"
+        android:label="ManageBankAccountFragment" >
+        <argument
+            android:name="mode"
+            app:argType="com.robotbot.financetracker.presentation.navigation.ManageMode" />
+        <argument
+            android:name="accountId"
+            app:argType="integer"
+            android:defaultValue="0" />
+        <action
+            android:id="@+id/action_manage_bank_account_fragment_to_delete_bank_account_dialog_fragment"
+            app:destination="@id/delete_bank_account_dialog_fragment" />
+    </fragment>
+    <dialog
+        android:id="@+id/delete_bank_account_dialog_fragment"
+        android:name="com.robotbot.financetracker.presentation.bank_account.manage.DeleteBankAccountDialogFragment"
+        android:label="DeleteBankAccountDialogFragment" >
+        <argument
+            android:name="accountName"
+            app:argType="string" />
+    </dialog>
+    <fragment
+        android:id="@+id/manageCategoryFragment"
+        android:name="com.robotbot.financetracker.presentation.category.manage.ManageCategoryFragment"
+        android:label="ManageCategoryFragment" >
+        <argument
+            android:name="mode"
+            app:argType="com.robotbot.financetracker.presentation.navigation.ManageMode" />
+        <argument
+            android:name="categoryId"
+            app:argType="integer"
+            android:defaultValue="0" />
+        <action
+            android:id="@+id/action_manageCategoryFragment_to_deleteCategoryDialogFragment"
+            app:destination="@id/deleteCategoryDialogFragment" />
+    </fragment>
+    <dialog
+        android:id="@+id/deleteCategoryDialogFragment"
+        android:name="com.robotbot.financetracker.presentation.category.manage.DeleteCategoryDialogFragment"
+        android:label="DeleteCategoryDialogFragment" >
+        <argument
+            android:name="categoryName"
+            app:argType="string" />
+    </dialog>
+</navigation>

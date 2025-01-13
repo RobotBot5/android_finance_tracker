@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.navigation.safeargs)
 }
 
 android {
@@ -65,4 +66,7 @@ dependencies {
     implementation(libs.logging.interceptor)
 
     implementation(libs.shimmer)
+
+    implementation(libs.navigation.fragment)
+    implementation(libs.navigation.ui)
 }

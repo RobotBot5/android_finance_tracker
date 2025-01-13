@@ -8,18 +8,18 @@ import android.view.View.GONE
 import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import com.robotbot.financetracker.presentation.FinanceTrackerApp
 import com.robotbot.financetracker.databinding.FragmentBankAccountsBinding
 import com.robotbot.financetracker.presentation.ViewModelFactory
 import com.robotbot.financetracker.presentation.bank_account.adapter.BankAccountsAdapter
-import com.robotbot.financetracker.presentation.bank_account.manage.ManageBankAccountActivity
+import com.robotbot.financetracker.presentation.navigation.ManageMode
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -68,8 +68,13 @@ class BankAccountFragment : Fragment() {
 
     private fun setupRecyclerView() {
         bankAccountsAdapter.onAccountClickListener = {
-            val intent = ManageBankAccountActivity.newIntentEditMode(requireContext(), it.id)
-            startActivity(intent)
+            findNavController().navigate(
+                BankAccountFragmentDirections.actionBankAccountsFragmentToManageBankAccountFragment(
+                    ManageMode.EDIT
+                ).apply {
+                    accountId = it.id
+                }
+            )
         }
         binding.rvBankAccounts.adapter = bankAccountsAdapter
 
@@ -77,8 +82,11 @@ class BankAccountFragment : Fragment() {
 
     private fun setupListenersOnViews() {
         binding.fabAddAccount.setOnClickListener {
-            val intent = ManageBankAccountActivity.newIntentAddMode(requireContext())
-            startActivity(intent)
+            findNavController().navigate(
+                BankAccountFragmentDirections.actionBankAccountsFragmentToManageBankAccountFragment(
+                    ManageMode.ADD
+                )
+            )
         }
     }
 
@@ -133,12 +141,6 @@ class BankAccountFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-    }
-
-    companion object {
-        fun newInstance(): BankAccountFragment {
-            return BankAccountFragment()
-        }
     }
 
 }
