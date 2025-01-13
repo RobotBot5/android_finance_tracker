@@ -41,10 +41,4 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
-
-    private fun loadFragment(fragment: Fragment) {
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.nav_host_fragment, fragment)
-            .commit()
-    }
 }

@@ -9,6 +9,7 @@ import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -36,7 +37,7 @@ class BankAccountFragment : Fragment() {
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
 
-    private lateinit var viewModel: BankAccountViewModel
+    private val viewModel: BankAccountViewModel by viewModels { viewModelFactory }
 
     @Inject
     lateinit var bankAccountsAdapter: BankAccountsAdapter
@@ -57,10 +58,6 @@ class BankAccountFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel = ViewModelProvider(
-            this,
-            viewModelFactory
-        )[BankAccountViewModel::class.java]
         setupRecyclerView()
         setupListenersOnViews()
         observeViewModel()

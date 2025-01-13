@@ -12,6 +12,7 @@ import android.widget.ArrayAdapter
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResultListener
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -40,7 +41,7 @@ class ManageBankAccountFragment : Fragment() {
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
 
-    private lateinit var viewModel: ManageBankAccountViewModel
+    private val viewModel: ManageBankAccountViewModel by viewModels { viewModelFactory }
 
     private val args by navArgs<ManageBankAccountFragmentArgs>()
 
@@ -73,8 +74,8 @@ class ManageBankAccountFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel =
-            ViewModelProvider(this, viewModelFactory)[ManageBankAccountViewModel::class.java]
+//        viewModel =
+//            ViewModelProvider(this, viewModelFactory)[ManageBankAccountViewModel::class.java]
         // TODO: Replace temporary spnCurrency logic with a recycler view (mb on another activity/fragment)
         binding.spnCurrency.adapter = ArrayAdapter(
             requireContext(),
