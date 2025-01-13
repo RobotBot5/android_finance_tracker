@@ -5,6 +5,7 @@ import com.robotbot.financetracker.presentation.bank_account.BankAccountFragment
 import com.robotbot.financetracker.presentation.category.CategoryFragment
 import com.robotbot.financetracker.presentation.category.manage.ManageCategoryActivity
 import com.robotbot.financetracker.presentation.bank_account.manage.ManageBankAccountActivity
+import com.robotbot.financetracker.presentation.bank_account.manage.ManageBankAccountFragment
 import com.robotbot.financetracker.presentation.category.manage.ManageCategoryFragment
 import dagger.BindsInstance
 import dagger.Component
@@ -22,6 +23,8 @@ interface ApplicationComponent {
     fun inject(manageCategoryActivity: ManageCategoryActivity)
 
     fun inject(fragment: ManageCategoryFragment)
+
+    fun inject(fragment: ManageBankAccountFragment)
 
 
     @Component.Factory

@@ -1,13 +1,9 @@
 package com.robotbot.financetracker.presentation.category.manage
 
-import android.content.ContentValues
 import android.content.Context
-import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.core.widget.doOnTextChanged
@@ -21,12 +17,9 @@ import com.robotbot.financetracker.domain.DomainConstants
 import com.robotbot.financetracker.domain.entities.TransactionType
 import com.robotbot.financetracker.presentation.FinanceTrackerApp
 import com.robotbot.financetracker.presentation.ViewModelFactory
-import com.robotbot.financetracker.presentation.category.CategoryDisplayState
-import com.robotbot.financetracker.presentation.category.CategoryFragment
 import com.robotbot.financetracker.presentation.category.manage.icons_adapter.IconAdapter
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import kotlin.concurrent.thread
 
 class ManageCategoryFragment : Fragment() {
 
