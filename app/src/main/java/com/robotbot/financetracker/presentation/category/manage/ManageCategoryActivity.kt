@@ -3,6 +3,7 @@ package com.robotbot.financetracker.presentation.category.manage
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View.VISIBLE
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
@@ -26,8 +27,11 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class ManageCategoryActivity : AppCompatActivity(),
-    DeleteCategoryDialogFragment.DeleteCategoryDialogListener {
+class ManageCategoryActivity : AppCompatActivity(), ManageCategoryFragment.OnWorkEndedListener {
+
+    override fun onWorkEndedListener() {
+        finish()
+    }
 
     private val binding by lazy {
         ActivityManageCategoryBinding.inflate(layoutInflater)
@@ -36,14 +40,6 @@ class ManageCategoryActivity : AppCompatActivity(),
     private val component by lazy {
         (application as FinanceTrackerApp).component
     }
-
-    @Inject
-    lateinit var viewModelFactory: ViewModelFactory
-
-    private val viewModel: ManageCategoryViewModel by viewModels { viewModelFactory }
-
-    @Inject
-    lateinit var iconsAdapter: IconAdapter
 
     private var screenMode: String = MODE_UNDEFINED
 
@@ -55,18 +51,30 @@ class ManageCategoryActivity : AppCompatActivity(),
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(binding.root)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main_content)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-        observeViewModel()
-        setListenersOnViews()
-        launchRightMode()
-        iconsAdapter.onCategoryIconClickListener = {
-            viewModel.setSelectedCategoryIcon(it)
+        if (savedInstanceState == null) {
+            val fragment = when (screenMode) {
+                MODE_ADD -> {
+                    ManageCategoryFragment.newInstanceAddCategory()
+                }
+
+                MODE_EDIT -> {
+                    ManageCategoryFragment.newInstanceEditCategory(categoryId)
+                }
+
+                else -> {
+                    throw RuntimeException("Unknown screen mode")
+                }
+            }
+            supportFragmentManager
+                .beginTransaction()
+                .add(R.id.main_content, fragment)
+                .commit()
         }
-        binding.rvCategoryIcons.adapter = iconsAdapter
     }
 
     private fun parseParams() {
@@ -81,99 +89,6 @@ class ManageCategoryActivity : AppCompatActivity(),
                 throw RuntimeException("Param account id is absent")
             }
         }
-    }
-
-    private fun observeViewModel() {
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.RESUMED) {
-                viewModel.state.collect {
-                    iconsAdapter.submitList(
-                        it.iconResIds
-                    )
-                    with(binding) {
-                        when (it.displayState) {
-                            is ManageCategoryDisplayState.Initial -> {
-                                rbExpense.isChecked = true
-                            }
-
-                            is ManageCategoryDisplayState.InitialEditMode -> {
-                                etCategoryName.setText(it.displayState.categoryEntity.name)
-                                if (it.displayState.categoryEntity.transactionType == TransactionType.INCOME) {
-                                    rbIncome.isChecked = true
-                                }
-                            }
-
-                            is ManageCategoryDisplayState.Content -> {
-                                tilCategoryName.error = it.displayState.nameError
-                            }
-
-                            ManageCategoryDisplayState.WorkEnded -> finish()
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    private fun setListenersOnViews() {
-        with(binding) {
-            etCategoryName.doOnTextChanged { _, _, _, _ ->
-                viewModel.resetErrorInputName()
-            }
-        }
-    }
-
-    private fun launchRightMode() {
-        when (screenMode) {
-            MODE_ADD -> launchAddMode()
-            MODE_EDIT -> launchEditMode()
-        }
-    }
-
-    private fun launchEditMode() {
-        viewModel.setupEditCategoryById(categoryId)
-        with(binding) {
-            btnDeleteCategory.visibility = VISIBLE
-            btnDeleteCategory.setOnClickListener {
-                lifecycleScope.launch {
-                    val categoryName = viewModel.state.value.categoryToDeleteName ?: return@launch
-                    DeleteCategoryDialogFragment.newInstance(
-                        categoryName = categoryName
-                    ).show(supportFragmentManager, "DELETE_CATEGORY_DIALOG")
-                }
-            }
-            btnSaveCategory.setOnClickListener {
-                val categoryType = getCategoryType()
-                viewModel.editCategory(
-                    inputName = etCategoryName.text.toString(),
-                    type = categoryType
-                )
-            }
-        }
-    }
-
-    private fun launchAddMode() {
-        with(binding) {
-            btnSaveCategory.setOnClickListener {
-                val categoryType = getCategoryType()
-                viewModel.addCategory(
-                    inputName = etCategoryName.text.toString(),
-                    type = categoryType
-                )
-            }
-        }
-    }
-
-    private fun getCategoryType(): TransactionType {
-        return if (binding.rbExpense.isChecked) {
-            TransactionType.EXPENSE
-        } else {
-            TransactionType.INCOME
-        }
-    }
-
-    override fun onDeleteCategoryDialogPositiveClick() {
-        viewModel.deleteCategory()
     }
 
     companion object {

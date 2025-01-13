@@ -9,18 +9,7 @@ import com.robotbot.financetracker.R
 
 class DeleteCategoryDialogFragment : DialogFragment() {
 
-    private lateinit var deleteCategoryDialogListener: DeleteCategoryDialogListener
-
     private var categoryName: String = CATEGORY_NAME_UNDEFINED
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        if (context is DeleteCategoryDialogListener) {
-            deleteCategoryDialogListener = context
-        } else {
-            throw ClassCastException("Activity must implement DeleteCategoryDialogListener")
-        }
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,7 +27,10 @@ class DeleteCategoryDialogFragment : DialogFragment() {
             AlertDialog.Builder(it)
                 .setMessage(getString(R.string.dialog_message_delete_category, categoryName))
                 .setPositiveButton(getString(R.string.dialog_delete_account_button_confirm)) { _, _ ->
-                    deleteCategoryDialogListener.onDeleteCategoryDialogPositiveClick()
+                    parentFragmentManager.setFragmentResult(
+                        REQUEST_KEY,
+                        Bundle().apply { putBoolean(RESULT_KEY, true) }
+                    )
                 }
                 .setNegativeButton(getString(R.string.dialog_delete_account_button_cancel)) { _, _ ->
                 }
@@ -46,14 +38,12 @@ class DeleteCategoryDialogFragment : DialogFragment() {
         } ?: throw IllegalStateException("Activity == null")
     }
 
-    interface DeleteCategoryDialogListener {
-        fun onDeleteCategoryDialogPositiveClick()
-    }
-
     companion object {
 
         private const val CATEGORY_NAME_KEY = "category_name"
         private const val CATEGORY_NAME_UNDEFINED = ""
+        const val REQUEST_KEY = "delete_category_request"
+        const val RESULT_KEY = "delete_category_result"
 
         fun newInstance(categoryName: String): DeleteCategoryDialogFragment {
             return DeleteCategoryDialogFragment().apply {
