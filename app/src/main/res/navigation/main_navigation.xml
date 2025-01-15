@@ -11,6 +11,9 @@
         <action
             android:id="@+id/action_bank_accounts_fragment_to_manageBankAccountFragment"
             app:destination="@id/manage_bank_account_fragment" />
+        <action
+            android:id="@+id/action_bank_accounts_fragment_to_createTransferFragment"
+            app:destination="@id/createTransferFragment" />
     </fragment>
     <fragment
         android:id="@+id/category_fragment"
@@ -66,4 +69,8 @@
             android:name="categoryName"
             app:argType="string" />
     </dialog>
+    <fragment
+        android:id="@+id/createTransferFragment"
+        android:name="com.robotbot.financetracker.presentation.bank_account.transfer.CreateTransferFragment"
+        android:label="CreateTransferFragment" />
 </navigation>

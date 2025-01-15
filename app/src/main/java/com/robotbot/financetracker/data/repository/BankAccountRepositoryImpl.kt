@@ -24,6 +24,7 @@ class BankAccountRepositoryImpl @Inject constructor(
 
     override fun getAll(): Flow<List<BankAccountEntity>> {
         return bankAccountDao.getAccounts()
+            .onEach { delay(3000) }
             .map { mapper.mapListDbModelToListEntity(it) }
     }
 

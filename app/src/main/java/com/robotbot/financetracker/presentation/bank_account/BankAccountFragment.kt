@@ -15,6 +15,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
+import com.robotbot.financetracker.R
 import com.robotbot.financetracker.databinding.FragmentBankAccountsBinding
 import com.robotbot.financetracker.presentation.FinanceTrackerApp
 import com.robotbot.financetracker.presentation.ViewModelFactory
@@ -83,6 +84,9 @@ class BankAccountFragment : Fragment() {
                     ManageMode.ADD
                 )
             )
+        }
+        binding.btnTransfer.setOnClickListener {
+            findNavController().navigate(R.id.action_bank_accounts_fragment_to_createTransferFragment)
         }
     }
 
