@@ -11,13 +11,12 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
-import com.robotbot.financetracker.presentation.FinanceTrackerApp
 import com.robotbot.financetracker.databinding.FragmentBankAccountsBinding
+import com.robotbot.financetracker.presentation.FinanceTrackerApp
 import com.robotbot.financetracker.presentation.ViewModelFactory
 import com.robotbot.financetracker.presentation.bank_account.adapter.BankAccountsAdapter
 import com.robotbot.financetracker.presentation.navigation.ManageMode
@@ -88,8 +87,8 @@ class BankAccountFragment : Fragment() {
     }
 
     private fun observeViewModel() {
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.RESUMED) {
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.CREATED) {
                 viewModel.state.collect {
                     binding.pbBankAccounts.visibility = GONE
                     when (it.bankAccountListState) {
