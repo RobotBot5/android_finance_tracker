@@ -11,9 +11,11 @@ import com.robotbot.financetracker.data.network.ApiFactory
 import com.robotbot.financetracker.data.network.ApiService
 import com.robotbot.financetracker.data.repository.BankAccountRepositoryImpl
 import com.robotbot.financetracker.data.repository.CurrencyRateRepositoryImpl
+import com.robotbot.financetracker.data.repository.TransferRepositoryImpl
 import com.robotbot.financetracker.domain.repotisories.BankAccountRepository
 import com.robotbot.financetracker.domain.repotisories.CategoryRepository
 import com.robotbot.financetracker.domain.repotisories.CurrencyRateRepository
+import com.robotbot.financetracker.domain.repotisories.TransferRepository
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -31,6 +33,9 @@ interface DataModule {
 
     @Binds
     fun bindCurrencyRateRepository(impl: CurrencyRateRepositoryImpl): CurrencyRateRepository
+
+    @Binds
+    fun bindTransferRepository(impl: TransferRepositoryImpl): TransferRepository
 
     companion object {
 
