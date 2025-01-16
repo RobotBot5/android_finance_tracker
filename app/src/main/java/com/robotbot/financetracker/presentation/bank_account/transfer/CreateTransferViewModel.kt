@@ -50,7 +50,7 @@ class CreateTransferViewModel @Inject constructor(
         val currentState = state.value
         val accountFrom = currentState.accountFrom
         val accountTo = currentState.accountTo
-        if (accountFrom == null || accountTo == null || !amountInput.isValidAmount()) {
+        if (accountFrom == null || accountTo == null || accountFrom == accountTo || !amountInput.isValidAmount()) {
             _state.update {
                 it.copy(displayState = CreateTransferDisplayState.Error)
             }
