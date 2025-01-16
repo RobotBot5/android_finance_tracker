@@ -72,5 +72,17 @@
     <fragment
         android:id="@+id/createTransferFragment"
         android:name="com.robotbot.financetracker.presentation.bank_account.transfer.CreateTransferFragment"
-        android:label="CreateTransferFragment" />
+        android:label="CreateTransferFragment" >
+        <action
+            android:id="@+id/action_createTransferFragment_to_chooseAccountDialog"
+            app:destination="@id/chooseAccountDialog" />
+    </fragment>
+    <dialog
+        android:id="@+id/chooseAccountDialog"
+        android:name="com.robotbot.financetracker.presentation.bank_account.transfer.choose_account.ChooseAccountDialog"
+        android:label="ChooseAccountDialog" >
+        <argument
+            android:name="currentAccountId"
+            app:argType="integer" />
+    </dialog>
 </navigation>

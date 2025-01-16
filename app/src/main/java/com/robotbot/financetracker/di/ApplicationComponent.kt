@@ -4,6 +4,7 @@ import android.app.Application
 import com.robotbot.financetracker.presentation.bank_account.BankAccountFragment
 import com.robotbot.financetracker.presentation.category.CategoryFragment
 import com.robotbot.financetracker.presentation.bank_account.manage.ManageBankAccountFragment
+import com.robotbot.financetracker.presentation.bank_account.transfer.choose_account.ChooseAccountDialog
 import com.robotbot.financetracker.presentation.bank_account.transfer.CreateTransferFragment
 import com.robotbot.financetracker.presentation.category.manage.ManageCategoryFragment
 import dagger.BindsInstance
@@ -22,6 +23,8 @@ interface ApplicationComponent {
     fun inject(fragment: ManageBankAccountFragment)
 
     fun inject(fragment: CreateTransferFragment)
+
+    fun inject(fragment: ChooseAccountDialog)
 
 
     @Component.Factory

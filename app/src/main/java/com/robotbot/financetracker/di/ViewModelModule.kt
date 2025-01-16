@@ -5,6 +5,7 @@ import com.robotbot.financetracker.presentation.bank_account.BankAccountViewMode
 import com.robotbot.financetracker.presentation.category.CategoryViewModel
 import com.robotbot.financetracker.presentation.category.manage.ManageCategoryViewModel
 import com.robotbot.financetracker.presentation.bank_account.manage.ManageBankAccountViewModel
+import com.robotbot.financetracker.presentation.bank_account.transfer.choose_account.ChooseAccountViewModel
 import com.robotbot.financetracker.presentation.bank_account.transfer.CreateTransferViewModel
 import dagger.Binds
 import dagger.Module
@@ -37,5 +38,10 @@ interface ViewModelModule {
     @IntoMap
     @ViewModelKey(CreateTransferViewModel::class)
     fun bindCreateTransferViewModel(viewModel: CreateTransferViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(ChooseAccountViewModel::class)
+    fun bindChooseAccountViewModel(viewModel: ChooseAccountViewModel): ViewModel
 
 }

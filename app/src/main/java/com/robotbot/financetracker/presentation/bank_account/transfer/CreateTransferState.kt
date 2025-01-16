@@ -5,12 +5,5 @@ import com.robotbot.financetracker.domain.entities.BankAccountEntity
 data class CreateTransferState(
     val accountFrom: BankAccountEntity? = null,
     val accountTo: BankAccountEntity? = null,
-    val saveButtonEnabled: Boolean = false,
-    val displayState: CreateTransferDisplayState = CreateTransferDisplayState.Initial
+    val saveButtonEnabled: Boolean = false
 )
-
-sealed interface CreateTransferDisplayState {
-    data object Initial : CreateTransferDisplayState
-    data object Loading : CreateTransferDisplayState
-    data object Loaded : CreateTransferDisplayState
-}

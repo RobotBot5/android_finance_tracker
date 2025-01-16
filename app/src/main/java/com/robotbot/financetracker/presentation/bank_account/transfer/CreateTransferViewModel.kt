@@ -2,32 +2,54 @@ package com.robotbot.financetracker.presentation.bank_account.transfer
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.robotbot.financetracker.domain.entities.BankAccountEntity
-import com.robotbot.financetracker.domain.usecases.account.GetBankAccountListUseCase
+import com.robotbot.financetracker.domain.usecases.account.GetBankAccountUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class CreateTransferViewModel @Inject constructor(
-    private val getBankAccountListUseCase: GetBankAccountListUseCase
+    private val getBankAccountUseCase: GetBankAccountUseCase
 ) : ViewModel() {
-
-    lateinit var bankAccounts: MutableList<BankAccountEntity>
 
     private val _state = MutableStateFlow(CreateTransferState())
     val state = _state.asStateFlow()
 
-    init {
-        _state.update {
-            it.copy(displayState = CreateTransferDisplayState.Loading)
-        }
+    fun setFromAccount(bankAccountId: Int) {
+        setAccount(bankAccountId = bankAccountId, isFromAccount = true)
+    }
+
+    fun setToAccount(bankAccountId: Int) {
+        setAccount(bankAccountId = bankAccountId, isFromAccount = false)
+    }
+
+    private fun setAccount(
+        bankAccountId: Int,
+        isFromAccount: Boolean
+    ) {
         viewModelScope.launch {
-            bankAccounts = getBankAccountListUseCase().first().toMutableList()
-            _state.update {
-                it.copy(displayState = CreateTransferDisplayState.Loaded)
+            val bankAccount = getBankAccountUseCase(bankAccountId)
+            _state.update { currentState ->
+                if (isFromAccount) {
+                    if (currentState.accountTo == bankAccount) {
+                        currentState.copy(
+                            accountFrom = bankAccount,
+                            accountTo = null
+                        )
+                    } else {
+                        currentState.copy(accountFrom = bankAccount)
+                    }
+                } else {
+                    if (currentState.accountFrom == bankAccount) {
+                        currentState.copy(
+                            accountFrom = null,
+                            accountTo = bankAccount
+                        )
+                    } else {
+                        currentState.copy(accountTo = bankAccount)
+                    }
+                }
             }
         }
     }
