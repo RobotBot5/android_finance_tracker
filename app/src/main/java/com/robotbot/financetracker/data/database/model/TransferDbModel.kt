@@ -4,20 +4,19 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import com.robotbot.financetracker.domain.entities.BankAccountEntity
 import java.math.BigDecimal
 
 @Entity(
     tableName = "transfers",
     foreignKeys = [
         ForeignKey(
-            entity = BankAccountEntity::class,
+            entity = BankAccountDbModel::class,
             parentColumns = ["id"],
             childColumns = ["fromAccountId"],
             onDelete = ForeignKey.CASCADE
         ),
         ForeignKey(
-            entity = BankAccountEntity::class,
+            entity = BankAccountDbModel::class,
             parentColumns = ["id"],
             childColumns = ["toAccountId"],
             onDelete = ForeignKey.CASCADE
