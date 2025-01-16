@@ -7,14 +7,17 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.robotbot.financetracker.data.database.dao.BankAccountDao
 import com.robotbot.financetracker.data.database.dao.CategoryDao
+import com.robotbot.financetracker.data.database.dao.TransferDao
 import com.robotbot.financetracker.data.database.model.BankAccountDbModel
 import com.robotbot.financetracker.data.database.model.CategoryDbModel
 import com.robotbot.financetracker.data.database.model.Converters
+import com.robotbot.financetracker.data.database.model.TransferDbModel
 
 @Database(
     entities = [
         CategoryDbModel::class,
-        BankAccountDbModel::class
+        BankAccountDbModel::class,
+        TransferDbModel::class
     ], version = 1, exportSchema = false
 )
 @TypeConverters(Converters::class)
@@ -47,5 +50,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun categoryDao(): CategoryDao
 
     abstract fun bankAccountDao(): BankAccountDao
+
+    abstract fun transferDao(): TransferDao
 
 }

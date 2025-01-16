@@ -8,6 +8,6 @@ data class TransferEntity(
     val accountFrom: BankAccountEntity,
     val accountTo: BankAccountEntity,
     val amount: BigDecimal,
-    val date: LocalDateTime,
+//    val date: LocalDateTime,
     var id: Int = UNDEFINED_ID
 )
