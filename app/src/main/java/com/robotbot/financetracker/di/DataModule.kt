@@ -7,6 +7,7 @@ import com.robotbot.financetracker.data.repository.CategoryRepositoryImpl
 import com.robotbot.financetracker.data.database.AppDatabase
 import com.robotbot.financetracker.data.database.dao.BankAccountDao
 import com.robotbot.financetracker.data.database.dao.CategoryDao
+import com.robotbot.financetracker.data.database.dao.TransferDao
 import com.robotbot.financetracker.data.network.ApiFactory
 import com.robotbot.financetracker.data.network.ApiService
 import com.robotbot.financetracker.data.repository.BankAccountRepositoryImpl
@@ -57,6 +58,12 @@ interface DataModule {
         @Provides
         fun provideBankAccountDao(application: Application): BankAccountDao {
             return AppDatabase.getInstance(application).bankAccountDao()
+        }
+
+        @ApplicationScope
+        @Provides
+        fun provideTransferDao(application: Application): TransferDao {
+            return AppDatabase.getInstance(application).transferDao()
         }
 
         @ApplicationScope

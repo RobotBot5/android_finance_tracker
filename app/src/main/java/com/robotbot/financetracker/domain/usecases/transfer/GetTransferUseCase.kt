@@ -1,8 +1,9 @@
 package com.robotbot.financetracker.domain.usecases.transfer
 
 import com.robotbot.financetracker.domain.repotisories.TransferRepository
+import javax.inject.Inject
 
-class GetTransferUseCase(
+class GetTransferUseCase @Inject constructor(
     private val repository: TransferRepository
 ) {
 
