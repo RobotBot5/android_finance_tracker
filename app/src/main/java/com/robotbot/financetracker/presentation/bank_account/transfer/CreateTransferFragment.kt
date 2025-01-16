@@ -5,6 +5,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
@@ -57,14 +59,22 @@ class CreateTransferFragment : Fragment() {
     }
 
     private fun setListenersOnViews() {
-        binding.llFromAccountContainer.setOnClickListener {
-            showDialogToChooseAccount(viewModel.state.value.accountFrom) { chosenBankAccountId ->
-                viewModel.setFromAccount(chosenBankAccountId)
+        with(binding) {
+            llFromAccountContainer.setOnClickListener {
+                showDialogToChooseAccount(viewModel.state.value.accountFrom) { chosenBankAccountId ->
+                    viewModel.setFromAccount(chosenBankAccountId)
+                }
             }
-        }
-        binding.llToAccountContainer.setOnClickListener {
-            showDialogToChooseAccount(viewModel.state.value.accountTo) { chosenBankAccountId ->
-                viewModel.setToAccount(chosenBankAccountId)
+            llToAccountContainer.setOnClickListener {
+                showDialogToChooseAccount(viewModel.state.value.accountTo) { chosenBankAccountId ->
+                    viewModel.setToAccount(chosenBankAccountId)
+                }
+            }
+            etTransferAmount.doOnTextChanged { input, _, _, _ ->
+                viewModel.setAmount(input.toString())
+            }
+            btnSaveTransfer.setOnClickListener {
+                viewModel.saveTransfer(etTransferAmount.text.toString())
             }
         }
     }
@@ -89,7 +99,7 @@ class CreateTransferFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.RESUMED) {
                 viewModel.state.collect {
-                    with (binding) {
+                    with(binding) {
                         btnSaveTransfer.isEnabled = it.saveButtonEnabled
                         if (it.accountFrom != null) {
                             tvFromAccount.text = it.accountFrom.name
@@ -100,6 +110,18 @@ class CreateTransferFragment : Fragment() {
                             tvToAccount.text = it.accountTo.name
                         } else {
                             tvToAccount.text = "Not specified"
+                        }
+                        when (it.displayState) {
+                            CreateTransferDisplayState.Content -> {}
+                            CreateTransferDisplayState.WorkEnded -> {
+                                findNavController().popBackStack()
+                            }
+
+                            CreateTransferDisplayState.Error -> {
+                                Toast.makeText(requireActivity(), "Error", Toast.LENGTH_SHORT)
+                                    .show()
+                                findNavController().popBackStack()
+                            }
                         }
                     }
                 }
