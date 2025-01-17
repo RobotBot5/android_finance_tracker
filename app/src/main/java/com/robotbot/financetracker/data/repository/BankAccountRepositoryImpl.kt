@@ -10,6 +10,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
+import java.math.BigDecimal
 import javax.inject.Inject
 
 @ApplicationScope
@@ -17,6 +18,10 @@ class BankAccountRepositoryImpl @Inject constructor(
     private val bankAccountDao: BankAccountDao,
     private val mapper: BankAccountMapper
 ) : BankAccountRepository {
+
+    override suspend fun updateBalance(accountId: Int, newBalance: BigDecimal) {
+        bankAccountDao.updateAccountBalance(accountId, newBalance)
+    }
 
     override suspend fun getById(id: Int): BankAccountEntity {
         return mapper.mapDbModelToEntity(bankAccountDao.getAccountById(id))

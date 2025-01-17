@@ -6,6 +6,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.robotbot.financetracker.data.database.model.BankAccountDbModel
 import kotlinx.coroutines.flow.Flow
+import java.math.BigDecimal
 
 @Dao
 interface BankAccountDao {
@@ -21,5 +22,8 @@ interface BankAccountDao {
 
     @Query("DELETE FROM bank_accounts WHERE id=:id")
     suspend fun deleteAccountById(id: Int)
+
+    @Query("UPDATE bank_accounts SET balance=:balance WHERE id=:id")
+    suspend fun updateAccountBalance(id: Int, balance: BigDecimal)
 
 }
