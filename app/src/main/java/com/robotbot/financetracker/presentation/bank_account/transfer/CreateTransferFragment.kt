@@ -74,7 +74,7 @@ class CreateTransferFragment : Fragment() {
                 viewModel.setAmount(input.toString())
             }
             btnSaveTransfer.setOnClickListener {
-                viewModel.saveTransfer(etTransferAmount.text.toString())
+                viewModel.saveTransfer()
             }
         }
     }
@@ -117,8 +117,19 @@ class CreateTransferFragment : Fragment() {
                                 findNavController().popBackStack()
                             }
 
-                            CreateTransferDisplayState.Error -> {
-                                Toast.makeText(requireActivity(), "Error", Toast.LENGTH_SHORT)
+                            is CreateTransferDisplayState.Error -> {
+                                val errorText = when (it.displayState.errorState) {
+                                    ErrorState.InsufficientFunds -> {
+                                        "Insufficient funds, check your balance"
+                                    }
+                                    ErrorState.InvalidTransfer -> {
+                                        "Invalid transfer settings, contact us"
+                                    }
+                                    ErrorState.UnknownError -> {
+                                        "Unknown error, contact us"
+                                    }
+                                }
+                                Toast.makeText(requireActivity(), errorText, Toast.LENGTH_SHORT)
                                     .show()
                                 findNavController().popBackStack()
                             }

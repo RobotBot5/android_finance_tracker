@@ -43,29 +43,49 @@ class CreateTransferViewModel @Inject constructor(
 
     private fun String.isValidAmount(): Boolean {
         val amount = this.trim()
-        return amount.isNotBlank() && amount.toBigDecimalOrNull()?.let { it > BigDecimal.ZERO } == true
+        return amount.isNotBlank() && amount.toBigDecimalOrNull()
+            ?.let { it > BigDecimal.ZERO } == true
     }
 
-    fun saveTransfer(amountInput: String) {
+    private fun setErrorInState(errorState: ErrorState) {
+        _state.update {
+            it.copy(displayState = CreateTransferDisplayState.Error(errorState))
+        }
+    }
+
+    fun saveTransfer() {
         val currentState = state.value
         val accountFrom = currentState.accountFrom
         val accountTo = currentState.accountTo
-        if (accountFrom == null || accountTo == null || accountFrom == accountTo || !amountInput.isValidAmount()) {
-            _state.update {
-                it.copy(displayState = CreateTransferDisplayState.Error)
-            }
+        if (accountFrom == null || accountTo == null) {
+            setErrorInState(ErrorState.InvalidTransfer)
             return
         }
-        val amount = amountInput.trim().toBigDecimal()
+        val currentAmount = amount.value.trim().toBigDecimal()
         viewModelScope.launch {
-            val transfer = TransferEntity(
+            val result = addTransferUseCase(
                 accountFrom = accountFrom,
                 accountTo = accountTo,
-                amount = amount
+                amount = currentAmount
             )
-            addTransferUseCase(transfer)
-            _state.update {
-                it.copy(displayState = CreateTransferDisplayState.WorkEnded)
+            when (result) {
+                AddTransferUseCase.Result.InsufficientFunds -> {
+                    setErrorInState(ErrorState.InsufficientFunds)
+                }
+
+                AddTransferUseCase.Result.InvalidTransfer -> {
+                    setErrorInState(ErrorState.InvalidTransfer)
+                }
+
+                AddTransferUseCase.Result.Success -> {
+                    _state.update {
+                        it.copy(displayState = CreateTransferDisplayState.WorkEnded)
+                    }
+                }
+
+                is AddTransferUseCase.Result.UnknownError -> {
+                    setErrorInState(ErrorState.UnknownError)
+                }
             }
         }
     }
