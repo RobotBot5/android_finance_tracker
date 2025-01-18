@@ -4,6 +4,8 @@ import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.widget.doOnTextChanged
@@ -70,7 +72,7 @@ class CreateTransferFragment : Fragment() {
                     viewModel.setToAccount(chosenBankAccountId)
                 }
             }
-            etTransferAmount.doOnTextChanged { input, _, _, _ ->
+            etTransferAmountPrimary.doOnTextChanged { input, _, _, _ ->
                 viewModel.setAmount(input.toString())
             }
             btnSaveTransfer.setOnClickListener {
@@ -112,7 +114,13 @@ class CreateTransferFragment : Fragment() {
                             tvToAccount.text = "Not specified"
                         }
                         when (it.displayState) {
-                            CreateTransferDisplayState.Content -> {}
+                            CreateTransferDisplayState.SingleCurrency -> {
+                                tilTransferAmountSecondary.visibility = GONE
+                            }
+                            is CreateTransferDisplayState.DifferentCurrencies -> {
+                                tilTransferAmountSecondary.visibility = VISIBLE
+                                etTransferAmountSecondary.setHint(it.displayState.amountToPlaceholder)
+                            }
                             CreateTransferDisplayState.WorkEnded -> {
                                 findNavController().popBackStack()
                             }
