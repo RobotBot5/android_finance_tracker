@@ -11,7 +11,11 @@ data class CreateTransferState(
     val amountFrom: BigDecimal? = null
 ) {
     val saveButtonEnabled: Boolean
-        get() = accountFrom != null && accountTo != null && amountFrom != null
+        get() = accountFrom != null &&
+                accountTo != null &&
+                amountFrom != null &&
+                (displayState !is CreateTransferDisplayState.DifferentCurrencies ||
+                        (displayState.amountTo != null || displayState.amountToPlaceholder != BigDecimal.ZERO))
 
 }
 
@@ -19,7 +23,10 @@ sealed interface CreateTransferDisplayState {
 
     data object SingleCurrency : CreateTransferDisplayState
 
-    data class DifferentCurrencies(val amountToPlaceholder: String) : CreateTransferDisplayState
+    data class DifferentCurrencies(
+        val amountToPlaceholder: BigDecimal,
+        val amountTo: BigDecimal? = null
+    ) : CreateTransferDisplayState
 
     data class Error(val errorState: ErrorState) : CreateTransferDisplayState
 

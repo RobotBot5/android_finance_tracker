@@ -13,14 +13,16 @@ class TransferMapper @Inject constructor(
         id = transferEntity.id,
         fromAccountId = transferEntity.accountFrom.id,
         toAccountId = transferEntity.accountTo.id,
-        amount = transferEntity.amount
+        amountFrom = transferEntity.amountFrom,
+        amountTo = transferEntity.amountTo
     )
 
     fun mapDbModelToEntity(transferWithAccountsDbModel: TransferWithAccountsDbModel): TransferEntity = TransferEntity(
         id = transferWithAccountsDbModel.transfer.id,
         accountFrom = bankAccountMapper.mapDbModelToEntity(transferWithAccountsDbModel.fromBankAccount),
         accountTo = bankAccountMapper.mapDbModelToEntity(transferWithAccountsDbModel.toBankAccount),
-        amount = transferWithAccountsDbModel.transfer.amount
+        amountFrom = transferWithAccountsDbModel.transfer.amountFrom,
+        amountTo = transferWithAccountsDbModel.transfer.amountTo
     )
 
     fun mapListDbModelToListEntity(list: List<TransferWithAccountsDbModel>): List<TransferEntity> = list.map {

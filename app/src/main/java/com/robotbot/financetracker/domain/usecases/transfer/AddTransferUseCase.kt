@@ -16,24 +16,26 @@ class AddTransferUseCase @Inject constructor(
     suspend operator fun invoke(
         accountFrom: BankAccountEntity,
         accountTo: BankAccountEntity,
-        amount: BigDecimal
+        amountFrom: BigDecimal,
+        amountTo: BigDecimal
     ): Result {
 
-        if (!isValidTransfer(accountFrom, accountTo, amount)) {
+        if (!isValidTransfer(accountFrom, accountTo, amountFrom, amountTo)) {
             return Result.InvalidTransfer
         }
 
-        if (accountFrom.balance < amount) {
+        if (accountFrom.balance < amountFrom) {
             return Result.InsufficientFunds
         }
 
-        val newBalanceFrom = accountFrom.balance - amount
-        val newBalanceTo = accountTo.balance - amount
+        val newBalanceFrom = accountFrom.balance - amountFrom
+        val newBalanceTo = accountTo.balance + amountTo
 
         val transfer = TransferEntity(
             accountFrom = accountFrom,
             accountTo = accountTo,
-            amount = amount
+            amountFrom = amountFrom,
+            amountTo = amountTo
         )
 
         return try {
@@ -55,9 +57,10 @@ class AddTransferUseCase @Inject constructor(
     private fun isValidTransfer(
         accountFrom: BankAccountEntity,
         accountTo: BankAccountEntity,
-        amount: BigDecimal
+        amountFrom: BigDecimal,
+        amountTo: BigDecimal
     ): Boolean {
-        return accountFrom != accountTo && amount > BigDecimal.ZERO
+        return accountFrom != accountTo && amountFrom > BigDecimal.ZERO && amountTo > BigDecimal.ZERO
     }
 
     sealed interface Result {

@@ -5,7 +5,7 @@ import java.math.BigDecimal
 import java.math.RoundingMode
 import javax.inject.Inject
 
-class TransferBetweenCurrencies @Inject constructor() {
+class ConvertAmountBetweenCurrencies @Inject constructor() {
 
     operator fun invoke(
         amount: BigDecimal,

@@ -5,6 +5,9 @@ import com.robotbot.financetracker.data.network.ApiService
 import com.robotbot.financetracker.di.ApplicationScope
 import com.robotbot.financetracker.domain.entities.Currency
 import com.robotbot.financetracker.domain.repotisories.CurrencyRateRepository
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import java.math.BigDecimal
 import javax.inject.Inject
 
 @ApplicationScope
@@ -22,13 +25,17 @@ class CurrencyRateRepositoryImpl @Inject constructor(
         )
     }
 
-    override suspend fun realGetCurrencyRates(
+    override fun realGetCurrencyRates(
         mainCurrency: Currency,
         otherCurrencies: List<Currency>
-    ) = mapper.mapApiResponseToMap(
-        apiService.getCurrencyRates(
-            mainCurrencyCode = mapper.mapMainCurrencyForQuery(mainCurrency),
-            otherCurrencyList = mapper.mapOtherCurrencyForQuery(otherCurrencies)
+    ): Flow<Map<Currency, BigDecimal>> = flow {
+        emit(
+            mapper.mapApiResponseToMap(
+                apiService.getCurrencyRates(
+                    mainCurrencyCode = mapper.mapMainCurrencyForQuery(mainCurrency),
+                    otherCurrencyList = mapper.mapOtherCurrencyForQuery(otherCurrencies)
+                )
+            )
         )
-    )
+    }
 }

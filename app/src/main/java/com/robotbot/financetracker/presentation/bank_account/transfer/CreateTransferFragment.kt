@@ -72,8 +72,11 @@ class CreateTransferFragment : Fragment() {
                     viewModel.setToAccount(chosenBankAccountId)
                 }
             }
-            etTransferAmountPrimary.doOnTextChanged { input, _, _, _ ->
-                viewModel.setAmount(input.toString())
+            etTransferAmountFrom.doOnTextChanged { input, _, _, _ ->
+                viewModel.setAmountFrom(input.toString())
+            }
+            etTransferAmountTo.doOnTextChanged { input, _, _, _ ->
+                viewModel.setAmountTo(input.toString())
             }
             btnSaveTransfer.setOnClickListener {
                 viewModel.saveTransfer()
@@ -115,11 +118,11 @@ class CreateTransferFragment : Fragment() {
                         }
                         when (it.displayState) {
                             CreateTransferDisplayState.SingleCurrency -> {
-                                tilTransferAmountSecondary.visibility = GONE
+                                tilTransferAmountTo.visibility = GONE
                             }
                             is CreateTransferDisplayState.DifferentCurrencies -> {
-                                tilTransferAmountSecondary.visibility = VISIBLE
-                                etTransferAmountSecondary.setHint(it.displayState.amountToPlaceholder)
+                                tilTransferAmountTo.visibility = VISIBLE
+                                etTransferAmountTo.setHint(it.displayState.amountToPlaceholder.toPlainString())
                             }
                             CreateTransferDisplayState.WorkEnded -> {
                                 findNavController().popBackStack()

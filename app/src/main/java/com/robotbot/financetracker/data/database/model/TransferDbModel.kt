@@ -29,6 +29,7 @@ data class TransferDbModel(
     val id: Int,
     val fromAccountId: Int,
     val toAccountId: Int,
-    val amount: BigDecimal,
+    val amountFrom: BigDecimal,
+    val amountTo: BigDecimal,
 //    val date: LocalDateTime,
 )

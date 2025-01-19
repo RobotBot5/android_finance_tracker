@@ -11,7 +11,7 @@ class GetCurrencyRatesUseCase @Inject constructor(
     //TODO REPLACE INVOKE WITH realInvoke()
     suspend operator fun invoke() = repository.getCurrencyRates()
 
-    suspend fun realInvoke(otherCurrencies: List<Currency>) =
+    fun realInvoke(otherCurrencies: List<Currency>) =
         repository.realGetCurrencyRates(TARGET_CURRENCY, otherCurrencies)
 
 
