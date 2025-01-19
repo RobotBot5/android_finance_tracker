@@ -105,12 +105,16 @@ class CreateTransferViewModel @Inject constructor(
                 }
             }
         }.onEach { amountToPlaceholder ->
-            _state.update {
-                it.copy(
-                    displayState = CreateTransferDisplayState.DifferentCurrencies(
-                        amountToPlaceholder
-                    )
-                )
+            _state.update { currentState ->
+                val newDisplayState =
+                    if (currentState.displayState is CreateTransferDisplayState.DifferentCurrencies) {
+                        currentState.displayState.copy(
+                            amountToPlaceholder = amountToPlaceholder
+                        )
+                    } else {
+                        CreateTransferDisplayState.DifferentCurrencies(amountToPlaceholder)
+                    }
+                currentState.copy(displayState = newDisplayState)
             }
         }.launchIn(viewModelScope)
     }

@@ -1,5 +1,6 @@
 package com.robotbot.financetracker.presentation.bank_account.transfer
 
+import android.util.Log
 import com.robotbot.financetracker.domain.entities.BankAccountEntity
 import java.math.BigDecimal
 
@@ -11,11 +12,12 @@ data class CreateTransferState(
     val amountFrom: BigDecimal? = null
 ) {
     val saveButtonEnabled: Boolean
-        get() = accountFrom != null &&
-                accountTo != null &&
-                amountFrom != null &&
-                (displayState !is CreateTransferDisplayState.DifferentCurrencies ||
-                        (displayState.amountTo != null || displayState.amountToPlaceholder != BigDecimal.ZERO))
+        get() {
+            Log.d("CreateTransferState", displayState.toString())
+            return accountFrom != null && accountTo != null && amountFrom != null &&
+                    (displayState !is CreateTransferDisplayState.DifferentCurrencies ||
+                            (displayState.amountTo != null || displayState.amountToPlaceholder != BigDecimal.ZERO))
+        }
 
 }
 
