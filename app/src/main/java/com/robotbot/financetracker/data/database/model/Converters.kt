@@ -4,6 +4,7 @@ import androidx.room.TypeConverter
 import com.robotbot.financetracker.domain.entities.Currency
 import com.robotbot.financetracker.domain.entities.TransactionType
 import java.math.BigDecimal
+import java.util.Calendar
 import kotlin.enumValueOf
 
 class Converters {
@@ -25,4 +26,11 @@ class Converters {
 
     @TypeConverter
     fun stringToBigDecimal(value: String): BigDecimal = value.toBigDecimal()
+
+    @TypeConverter
+    fun fromTimestamp(value: Long): Calendar? =
+        Calendar.getInstance().apply { timeInMillis = value }
+
+    @TypeConverter
+    fun dateToTimestamp(calendar: Calendar): Long = calendar.timeInMillis
 }

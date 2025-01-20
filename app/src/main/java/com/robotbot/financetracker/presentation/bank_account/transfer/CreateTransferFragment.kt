@@ -1,6 +1,7 @@
 package com.robotbot.financetracker.presentation.bank_account.transfer
 
 import android.content.Context
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -23,6 +24,8 @@ import com.robotbot.financetracker.presentation.FinanceTrackerApp
 import com.robotbot.financetracker.presentation.ViewModelFactory
 import com.robotbot.financetracker.presentation.bank_account.transfer.choose_account.ChooseAccountDialog
 import kotlinx.coroutines.launch
+import java.io.Serializable
+import java.util.Calendar
 import javax.inject.Inject
 
 class CreateTransferFragment : Fragment() {
@@ -81,6 +84,18 @@ class CreateTransferFragment : Fragment() {
             btnSaveTransfer.setOnClickListener {
                 viewModel.saveTransfer()
             }
+            tvSelectedDate.setOnClickListener {
+                findNavController().navigate(
+                    CreateTransferFragmentDirections.actionCreateTransferFragmentToDatePickerFragment (
+                        viewModel.state.value.selectedDate
+                    )
+                )
+                setFragmentResultListener(DatePickerFragment.REQUEST_KEY) { _, bundle ->
+                    bundle.serializable<Calendar>(DatePickerFragment.RESULT_KEY)?.let {
+                        viewModel.setDate(it)
+                    }
+                }
+            }
         }
     }
 
@@ -106,6 +121,7 @@ class CreateTransferFragment : Fragment() {
                 viewModel.state.collect {
                     with(binding) {
                         btnSaveTransfer.isEnabled = it.saveButtonEnabled
+                        tvSelectedDate.text = viewModel.formatDateToString(it.selectedDate)
                         if (it.accountFrom != null) {
                             tvFromAccount.text = it.accountFrom.name
                         } else {
@@ -154,5 +170,10 @@ class CreateTransferFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private inline fun <reified T : Serializable> Bundle.serializable(key: String): T? = when {
+        Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU -> getSerializable(key, T::class.java)
+        else -> @Suppress("DEPRECATION") getSerializable(key) as? T
     }
 }

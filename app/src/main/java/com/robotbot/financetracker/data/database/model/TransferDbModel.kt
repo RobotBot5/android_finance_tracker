@@ -5,6 +5,7 @@ import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import java.math.BigDecimal
+import java.util.Calendar
 
 @Entity(
     tableName = "transfers",
@@ -31,5 +32,6 @@ data class TransferDbModel(
     val toAccountId: Int,
     val amountFrom: BigDecimal,
     val amountTo: BigDecimal,
+    val date: Calendar
 //    val date: LocalDateTime,
 )

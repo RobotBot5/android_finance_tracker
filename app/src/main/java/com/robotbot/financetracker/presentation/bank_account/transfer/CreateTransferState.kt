@@ -3,13 +3,15 @@ package com.robotbot.financetracker.presentation.bank_account.transfer
 import android.util.Log
 import com.robotbot.financetracker.domain.entities.BankAccountEntity
 import java.math.BigDecimal
+import java.util.Calendar
 
 data class CreateTransferState(
 
     val displayState: CreateTransferDisplayState = CreateTransferDisplayState.SingleCurrency,
     val accountFrom: BankAccountEntity? = null,
     val accountTo: BankAccountEntity? = null,
-    val amountFrom: BigDecimal? = null
+    val amountFrom: BigDecimal? = null,
+    val selectedDate: Calendar
 ) {
     val saveButtonEnabled: Boolean
         get() {

@@ -76,6 +76,9 @@
         <action
             android:id="@+id/action_createTransferFragment_to_chooseAccountDialog"
             app:destination="@id/chooseAccountDialog" />
+        <action
+            android:id="@+id/action_createTransferFragment_to_datePickerFragment"
+            app:destination="@id/datePickerFragment" />
     </fragment>
     <dialog
         android:id="@+id/chooseAccountDialog"
@@ -84,5 +87,13 @@
         <argument
             android:name="currentAccountId"
             app:argType="integer" />
+    </dialog>
+    <dialog
+        android:id="@+id/datePickerFragment"
+        android:name="com.robotbot.financetracker.presentation.bank_account.transfer.DatePickerFragment"
+        android:label="DatePickerFragment" >
+        <argument
+            android:name="prevDate"
+            app:argType="java.util.Calendar" />
     </dialog>
 </navigation>

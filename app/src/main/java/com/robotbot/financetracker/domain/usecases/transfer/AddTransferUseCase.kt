@@ -6,6 +6,7 @@ import com.robotbot.financetracker.domain.entities.TransferEntity
 import com.robotbot.financetracker.domain.repotisories.BankAccountRepository
 import com.robotbot.financetracker.domain.repotisories.TransferRepository
 import java.math.BigDecimal
+import java.util.Calendar
 import javax.inject.Inject
 
 class AddTransferUseCase @Inject constructor(
@@ -17,7 +18,8 @@ class AddTransferUseCase @Inject constructor(
         accountFrom: BankAccountEntity,
         accountTo: BankAccountEntity,
         amountFrom: BigDecimal,
-        amountTo: BigDecimal
+        amountTo: BigDecimal,
+        date: Calendar
     ): Result {
 
         if (!isValidTransfer(accountFrom, accountTo, amountFrom, amountTo)) {
@@ -35,7 +37,8 @@ class AddTransferUseCase @Inject constructor(
             accountFrom = accountFrom,
             accountTo = accountTo,
             amountFrom = amountFrom,
-            amountTo = amountTo
+            amountTo = amountTo,
+            date = date
         )
 
         return try {

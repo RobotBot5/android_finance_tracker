@@ -24,6 +24,9 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.math.BigDecimal
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
 import javax.inject.Inject
 
 
@@ -34,7 +37,11 @@ class CreateTransferViewModel @Inject constructor(
     private val convertAmountBetweenCurrencies: ConvertAmountBetweenCurrencies
 ) : ViewModel() {
 
-    private val _state = MutableStateFlow(CreateTransferState())
+    private val _state = MutableStateFlow(
+        CreateTransferState(
+            selectedDate = Calendar.getInstance()
+        )
+    )
     val state = _state.asStateFlow()
 
     private var currencyRates: Map<Currency, BigDecimal>? = null
@@ -134,11 +141,17 @@ class CreateTransferViewModel @Inject constructor(
         }
     }
 
+    fun formatDateToString(date: Calendar): String =
+        SimpleDateFormat("d MMMM yyyy", Locale.getDefault()).format(date.time)
+
+    fun setDate(date: Calendar) = _state.update { it.copy(selectedDate = date) }
+
     fun saveTransfer() {
         val currentState = state.value
         val accountFrom = currentState.accountFrom
         val accountTo = currentState.accountTo
         val amountFrom = currentState.amountFrom
+        val date = currentState.selectedDate
 
         if (accountFrom == null || accountTo == null || amountFrom == null) {
             setErrorInState(ErrorState.InvalidTransfer)
@@ -157,7 +170,8 @@ class CreateTransferViewModel @Inject constructor(
                 accountFrom = accountFrom,
                 accountTo = accountTo,
                 amountFrom = amountFrom,
-                amountTo = amountTo
+                amountTo = amountTo,
+                date = date
             )
             when (result) {
                 AddTransferUseCase.Result.InsufficientFunds -> {
