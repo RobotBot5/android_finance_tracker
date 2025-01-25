@@ -85,7 +85,6 @@ class BankAccountFragment : Fragment() {
         }
 
         binding.btnTransfer.setOnClickListener {
-//            navController.navigate(R.id.action_bank_accounts_fragment_to_createTransferFragment)
             nestedNavController.popBackStack(
                 destinationId = nestedNavController.graph.startDestinationId,
                 inclusive = false,
@@ -115,7 +114,6 @@ class BankAccountFragment : Fragment() {
             repeatOnLifecycle(Lifecycle.State.CREATED) {
                 viewModel.state.collect {
                     Log.d("BankAccountsState", "$it")
-                    binding.pbBankAccounts.visibility = GONE
                     when (it.totalBalanceState) {
                         TotalBalanceState.Initial -> {}
                         TotalBalanceState.Loading -> {

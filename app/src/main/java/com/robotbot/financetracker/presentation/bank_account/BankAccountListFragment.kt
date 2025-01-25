@@ -13,6 +13,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.findNavController
 import androidx.navigation.navGraphViewModels
 import com.robotbot.financetracker.R
 import com.robotbot.financetracker.databinding.FragmentBankAccountListBinding
@@ -64,15 +65,15 @@ class BankAccountListFragment : Fragment() {
     }
 
     private fun setupRecyclerView() {
-//        bankAccountsAdapter.onAccountClickListener = {
-//            navController.navigate(
-//                BankAccountFragmentDirections.actionBankAccountsFragmentToManageBankAccountFragment(
-//                    ManageMode.EDIT
-//                ).apply {
-//                    accountId = it.id
-//                }
-//            )
-//        }
+        bankAccountsAdapter.onAccountClickListener = {
+            requireActivity().findNavController(R.id.nav_host_fragment).navigate(
+                BankAccountFragmentDirections.actionBankAccountsFragmentToManageBankAccountFragment(
+                    ManageMode.EDIT
+                ).apply {
+                    accountId = it.id
+                }
+            )
+        }
         binding.rvBankAccounts.adapter = bankAccountsAdapter
 
     }
