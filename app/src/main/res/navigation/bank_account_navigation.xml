@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/bank_account_navigation"
+    app:startDestination="@id/bankAccountListFragment">
+
+    <fragment
+        android:id="@+id/bankAccountListFragment"
+        android:name="com.robotbot.financetracker.presentation.bank_account.BankAccountListFragment"
+        android:label="BankAccountListFragment" >
+        <action
+            android:id="@+id/action_bankAccountListFragment_to_transferListFragment"
+            app:destination="@id/transferListFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/transferListFragment"
+        android:name="com.robotbot.financetracker.presentation.TransferListFragment"
+        android:label="TransferListFragment" />
+</navigation>

@@ -2,18 +2,23 @@ package com.robotbot.financetracker.presentation.bank_account
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
 import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
+import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.navGraphViewModels
 import com.google.android.material.snackbar.Snackbar
 import com.robotbot.financetracker.R
 import com.robotbot.financetracker.databinding.FragmentBankAccountsBinding
@@ -39,8 +44,15 @@ class BankAccountFragment : Fragment() {
 
     private val viewModel: BankAccountViewModel by viewModels { viewModelFactory }
 
-    @Inject
-    lateinit var bankAccountsAdapter: BankAccountsAdapter
+    private val navController by lazy {
+        findNavController()
+    }
+
+    private val nestedNavController by lazy {
+        val nestedNavHostFragment =
+            childFragmentManager.findFragmentById(R.id.frag_container) as NavHostFragment
+        nestedNavHostFragment.navController
+    }
 
     override fun onAttach(context: Context) {
         component.inject(this)
@@ -58,35 +70,43 @@ class BankAccountFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setupRecyclerView()
+        Log.d("viewModelTest", "List: ${viewModel.test}")
         setupListenersOnViews()
         observeViewModel()
     }
 
-    private fun setupRecyclerView() {
-        bankAccountsAdapter.onAccountClickListener = {
-            findNavController().navigate(
-                BankAccountFragmentDirections.actionBankAccountsFragmentToManageBankAccountFragment(
-                    ManageMode.EDIT
-                ).apply {
-                    accountId = it.id
-                }
-            )
-        }
-        binding.rvBankAccounts.adapter = bankAccountsAdapter
-
-    }
-
     private fun setupListenersOnViews() {
         binding.fabAddAccount.setOnClickListener {
-            findNavController().navigate(
+            navController.navigate(
                 BankAccountFragmentDirections.actionBankAccountsFragmentToManageBankAccountFragment(
                     ManageMode.ADD
                 )
             )
         }
+
         binding.btnTransfer.setOnClickListener {
-            findNavController().navigate(R.id.action_bank_accounts_fragment_to_createTransferFragment)
+//            navController.navigate(R.id.action_bank_accounts_fragment_to_createTransferFragment)
+            nestedNavController.popBackStack(
+                destinationId = nestedNavController.graph.startDestinationId,
+                inclusive = false,
+                saveState = true
+            )
+        }
+        binding.btnTransferHistory.setOnClickListener {
+            nestedNavController.navigate(R.id.transferListFragment)
+        }
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
+            if (!nestedNavController.popBackStack(
+                    destinationId = nestedNavController.graph.findStartDestination().id,
+                    inclusive = false
+                )
+            ) {
+                navController.popBackStack(
+                    navController.graph.findStartDestination().id,
+                    inclusive = false,
+                    saveState = true
+                )
+            }
         }
     }
 
@@ -94,16 +114,8 @@ class BankAccountFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.CREATED) {
                 viewModel.state.collect {
+                    Log.d("BankAccountsState", "$it")
                     binding.pbBankAccounts.visibility = GONE
-                    when (it.bankAccountListState) {
-                        BankAccountListState.Initial -> {  }
-                        BankAccountListState.Loading -> {
-                            binding.pbBankAccounts.visibility = VISIBLE
-                        }
-                        is BankAccountListState.Content -> {
-                            bankAccountsAdapter.submitList(it.bankAccountListState.accounts)
-                        }
-                    }
                     when (it.totalBalanceState) {
                         TotalBalanceState.Initial -> {}
                         TotalBalanceState.Loading -> {
@@ -111,12 +123,15 @@ class BankAccountFragment : Fragment() {
                             binding.sflBalance.startShimmer()
                             binding.tvTotalBalance.visibility = INVISIBLE
                         }
+
                         is TotalBalanceState.Content -> {
                             binding.sflBalance.stopShimmer()
                             binding.sflBalance.visibility = GONE
                             binding.tvTotalBalance.visibility = VISIBLE
-                            binding.tvTotalBalance.text = "${it.totalBalanceState.totalBalance} руб."
+                            binding.tvTotalBalance.text =
+                                "${it.totalBalanceState.totalBalance} руб."
                         }
+
                         TotalBalanceState.Error -> {
                             binding.sflBalance.stopShimmer()
                             binding.sflBalance.visibility = GONE
@@ -134,6 +149,11 @@ class BankAccountFragment : Fragment() {
                         }
                     }
                 }
+            }
+        }
+        viewLifecycleOwner.lifecycleScope.launch {
+            nestedNavController.currentBackStack.collect { list ->
+                Log.d("BankAccountFragment", list.map { it.destination.label }.toString())
             }
         }
     }

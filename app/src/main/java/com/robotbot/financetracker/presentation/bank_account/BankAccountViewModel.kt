@@ -19,6 +19,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.random.Random
 
 class BankAccountViewModel @Inject constructor(
     getBankAccountListUseCase: GetBankAccountListUseCase,
@@ -33,6 +34,11 @@ class BankAccountViewModel @Inject constructor(
             BankAccountListState.Content(it)
         }
 
+    val test = Random.nextInt()
+
+    init {
+        Log.d("viewModelTest", "init $test")
+    }
 
     private val _totalBalanceState: MutableSharedFlow<TotalBalanceState> = MutableSharedFlow()
 
@@ -44,15 +50,14 @@ class BankAccountViewModel @Inject constructor(
             bankAccountListState = bankAccountListState,
             totalBalanceState = totalBalanceState
         )
-    }
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.Lazily,
-            initialValue = BankAccountState(
-                bankAccountListState = BankAccountListState.Initial,
-                totalBalanceState = TotalBalanceState.Initial
-            )
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.Lazily,
+        initialValue = BankAccountState(
+            bankAccountListState = BankAccountListState.Loading,
+            totalBalanceState = TotalBalanceState.Loading
         )
+    )
 
     private fun calculateTotalBalance(accounts: List<BankAccountEntity>) {
         viewModelScope.launch {
@@ -63,7 +68,8 @@ class BankAccountViewModel @Inject constructor(
                     if (account.currency == Currency.RUB) {
                         account.balance.toDouble()
                     } else {
-                        currencyRates[account.currency.name]?.times(account.balance.toDouble()) ?: throw RuntimeException()
+                        currencyRates[account.currency.name]?.times(account.balance.toDouble())
+                            ?: throw RuntimeException()
                     }
                 }
                 _totalBalanceState.emit(TotalBalanceState.Content(totalBalance))
