@@ -77,10 +77,13 @@ class BankAccountFragment : Fragment() {
 
     private fun setupListenersOnViews() {
         binding.fabAddAccount.setOnClickListener {
+//            navController.navigate(
+//                BankAccountFragmentDirections.actionBankAccountsFragmentToManageBankAccountFragment(
+//                    ManageMode.ADD
+//                )
+//            )
             navController.navigate(
-                BankAccountFragmentDirections.actionBankAccountsFragmentToManageBankAccountFragment(
-                    ManageMode.ADD
-                )
+                R.id.createTransferFragment
             )
         }
 

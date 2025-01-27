@@ -2,6 +2,7 @@ package com.robotbot.financetracker.di
 
 import androidx.lifecycle.ViewModel
 import com.robotbot.financetracker.presentation.bank_account.BankAccountViewModel
+import com.robotbot.financetracker.presentation.bank_account.TransferHistoryViewModel
 import com.robotbot.financetracker.presentation.category.CategoryViewModel
 import com.robotbot.financetracker.presentation.category.manage.ManageCategoryViewModel
 import com.robotbot.financetracker.presentation.bank_account.manage.ManageBankAccountViewModel
@@ -43,5 +44,10 @@ interface ViewModelModule {
     @IntoMap
     @ViewModelKey(ChooseAccountViewModel::class)
     fun bindChooseAccountViewModel(viewModel: ChooseAccountViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(TransferHistoryViewModel::class)
+    fun bindTransferHistoryViewModel(viewModel: TransferHistoryViewModel): ViewModel
 
 }

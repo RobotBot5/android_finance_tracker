@@ -14,6 +14,6 @@
     </fragment>
     <fragment
         android:id="@+id/transferListFragment"
-        android:name="com.robotbot.financetracker.presentation.TransferListFragment"
+        android:name="com.robotbot.financetracker.presentation.bank_account.TransferListFragment"
         android:label="TransferListFragment" />
 </navigation>

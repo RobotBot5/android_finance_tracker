@@ -5,8 +5,10 @@ import com.robotbot.financetracker.data.mapper.TransferMapper
 import com.robotbot.financetracker.di.ApplicationScope
 import com.robotbot.financetracker.domain.entities.TransferEntity
 import com.robotbot.financetracker.domain.repotisories.TransferRepository
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
 
 @ApplicationScope
@@ -21,6 +23,7 @@ class TransferRepositoryImpl @Inject constructor(
 
     override fun getAll(): Flow<List<TransferEntity>> {
         return transferDao.getTransfers()
+            .onEach { delay(3000) }
             .map { mapper.mapListDbModelToListEntity(it) }
     }
 

@@ -3,6 +3,7 @@ package com.robotbot.financetracker.di
 import android.app.Application
 import com.robotbot.financetracker.presentation.bank_account.BankAccountFragment
 import com.robotbot.financetracker.presentation.bank_account.BankAccountListFragment
+import com.robotbot.financetracker.presentation.bank_account.TransferListFragment
 import com.robotbot.financetracker.presentation.category.CategoryFragment
 import com.robotbot.financetracker.presentation.bank_account.manage.ManageBankAccountFragment
 import com.robotbot.financetracker.presentation.bank_account.transfer.choose_account.ChooseAccountDialog
@@ -28,6 +29,8 @@ interface ApplicationComponent {
     fun inject(fragment: ChooseAccountDialog)
 
     fun inject(fragment: BankAccountListFragment)
+
+    fun inject(fragment: TransferListFragment)
 
 
     @Component.Factory
