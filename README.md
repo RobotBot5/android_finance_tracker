@@ -10,3 +10,5 @@
 - 🗂 **Store data locally** with Room database
 - 🧭 **Navigation** with Jetpack Navigation
 - 🛠 **Future migration plans** to Jetpack Compose, MVI, and Decompose
+
+## P.S. All development is in the "develop" branch
