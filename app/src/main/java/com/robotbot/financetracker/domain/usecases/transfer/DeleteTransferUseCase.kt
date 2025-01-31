@@ -1,34 +1,30 @@
 package com.robotbot.financetracker.domain.usecases.transfer
 
-import com.robotbot.financetracker.di.RealBankAccountDatabaseQualifier
 import com.robotbot.financetracker.domain.entities.TransferEntity
-import com.robotbot.financetracker.domain.repotisories.BankAccountRepository
 import com.robotbot.financetracker.domain.repotisories.TransferRepository
 import javax.inject.Inject
 
 class DeleteTransferUseCase @Inject constructor(
     private val repository: TransferRepository,
-    @RealBankAccountDatabaseQualifier private val bankAccountRepository: BankAccountRepository
+    private val updateBalancesUseCase: UpdateBalancesUseCase
 ) {
 
-    suspend operator fun invoke(transferEntity: TransferEntity) {
-        updateBalances(transferEntity)
-        repository.delete(transferEntity.id)
-    }
+    suspend operator fun invoke(transferEntity: TransferEntity): Result {
+        updateBalancesUseCase(
+            accountFromId = transferEntity.accountFrom.id,
+            accountToId = transferEntity.accountTo.id,
+            newBalanceFrom = transferEntity.accountFrom.balance + transferEntity.amountFrom,
+            newBalanceTo = transferEntity.accountTo.balance - transferEntity.amountTo
+        ).let {
+            if (it !is Result.Success) return it
+        }
 
-    private suspend fun updateBalances(transferEntity: TransferEntity) {
-        val accountFrom = transferEntity.accountFrom
-        val newBalanceAccountFrom = accountFrom.balance + transferEntity.amountFrom
-        bankAccountRepository.updateBalance(
-            accountId = accountFrom.id,
-            newBalance = newBalanceAccountFrom
-        )
-        val accountTo = transferEntity.accountTo
-        val newBalanceAccountTo = accountTo.balance - transferEntity.amountTo
-        bankAccountRepository.updateBalance(
-            accountId = accountTo.id,
-            newBalance = newBalanceAccountTo
-        )
+        return try {
+            repository.delete(transferEntity.id)
+            Result.Success
+        } catch (e: Exception) {
+            Result.UnknownError(e)
+        }
     }
 
 }

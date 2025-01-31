@@ -11,7 +11,9 @@ import com.robotbot.financetracker.domain.usecases.ConvertAmountBetweenCurrencie
 import com.robotbot.financetracker.domain.usecases.account.GetBankAccountUseCase
 import com.robotbot.financetracker.domain.usecases.transfer.AddTransferUseCase
 import com.robotbot.financetracker.domain.usecases.transfer.DeleteTransferUseCase
+import com.robotbot.financetracker.domain.usecases.transfer.EditTransferUseCase
 import com.robotbot.financetracker.domain.usecases.transfer.GetTransferUseCase
+import com.robotbot.financetracker.domain.usecases.transfer.Result
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -39,7 +41,8 @@ class CreateTransferViewModel @Inject constructor(
     private val getCurrencyRatesUseCase: GetCurrencyRatesUseCase,
     private val convertAmountBetweenCurrencies: ConvertAmountBetweenCurrencies,
     private val getTransferUseCase: GetTransferUseCase,
-    private val deleteTransferUseCase: DeleteTransferUseCase
+    private val deleteTransferUseCase: DeleteTransferUseCase,
+    private val editTransferUseCase: EditTransferUseCase
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(
@@ -154,6 +157,10 @@ class CreateTransferViewModel @Inject constructor(
     fun setDate(date: Calendar) = _state.update { it.copy(selectedDate = date) }
 
     fun saveTransfer() {
+        saveOrEditTransfer(isEditing = false)
+    }
+
+    private fun saveOrEditTransfer(isEditing: Boolean) {
         val currentState = state.value
         val accountFrom = currentState.accountFrom
         val accountTo = currentState.accountTo
@@ -167,35 +174,45 @@ class CreateTransferViewModel @Inject constructor(
 
         val amountTo =
             if (currentState.currencyState is CreateTransferCurrencyState.DifferentCurrencies) {
-                currentState.currencyState.amountTo ?: currentState.currencyState.amountToPlaceholder
+                currentState.currencyState.amountTo
+                    ?: currentState.currencyState.amountToPlaceholder
             } else {
                 amountFrom
             }
 
         viewModelScope.launch {
-            val result = addTransferUseCase(
-                accountFrom = accountFrom,
-                accountTo = accountTo,
-                amountFrom = amountFrom,
-                amountTo = amountTo,
-                date = date
-            )
+            val result = if (isEditing) {
+                editTransferUseCase(
+                    oldTransferEntity = transferToEditOrUndefined ?: return@launch setErrorInState(
+                        ErrorState.InvalidTransfer
+                    ),
+                    accountFrom = accountFrom,
+                    accountTo = accountTo,
+                    amountFrom = amountFrom,
+                    amountTo = amountTo,
+                    date = date
+                )
+            } else {
+                addTransferUseCase(
+                    accountFrom = accountFrom,
+                    accountTo = accountTo,
+                    amountFrom = amountFrom,
+                    amountTo = amountTo,
+                    date = date
+                )
+            }
             when (result) {
-                AddTransferUseCase.Result.InsufficientFunds -> {
-                    setErrorInState(ErrorState.InsufficientFunds)
-                }
-
-                AddTransferUseCase.Result.InvalidTransfer -> {
+                Result.InvalidTransfer -> {
                     setErrorInState(ErrorState.InvalidTransfer)
                 }
 
-                AddTransferUseCase.Result.Success -> {
+                Result.Success -> {
                     _state.update {
                         it.copy(displayState = CreateTransferDisplayState.WorkEnded)
                     }
                 }
 
-                is AddTransferUseCase.Result.UnknownError -> {
+                is Result.UnknownError -> {
                     setErrorInState(ErrorState.UnknownError)
                 }
             }
@@ -313,7 +330,7 @@ class CreateTransferViewModel @Inject constructor(
     }
 
     fun updateTransfer() {
-
+        saveOrEditTransfer(isEditing = true)
     }
 
     fun deleteTransfer() {

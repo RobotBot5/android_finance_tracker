@@ -1,9 +1,7 @@
 package com.robotbot.financetracker.domain.usecases.transfer
 
-import com.robotbot.financetracker.di.RealBankAccountDatabaseQualifier
 import com.robotbot.financetracker.domain.entities.BankAccountEntity
 import com.robotbot.financetracker.domain.entities.TransferEntity
-import com.robotbot.financetracker.domain.repotisories.BankAccountRepository
 import com.robotbot.financetracker.domain.repotisories.TransferRepository
 import java.math.BigDecimal
 import java.util.Calendar
@@ -11,7 +9,8 @@ import javax.inject.Inject
 
 class AddTransferUseCase @Inject constructor(
     private val transferRepository: TransferRepository,
-    @RealBankAccountDatabaseQualifier private val bankAccountRepository: BankAccountRepository
+    private val checkValidTransferUseCase: CheckValidTransferUseCase,
+    private val updateBalancesUseCase: UpdateBalancesUseCase
 ) {
 
     suspend operator fun invoke(
@@ -22,16 +21,24 @@ class AddTransferUseCase @Inject constructor(
         date: Calendar
     ): Result {
 
-        if (!isValidTransfer(accountFrom, accountTo, amountFrom, amountTo)) {
+        if (!checkValidTransferUseCase(
+                accountFrom = accountFrom,
+                accountTo = accountTo,
+                amountFrom = amountFrom,
+                amountTo = amountTo
+            )
+        ) {
             return Result.InvalidTransfer
         }
 
-        if (accountFrom.balance < amountFrom) {
-            return Result.InsufficientFunds
+        updateBalancesUseCase(
+            accountFromId = accountFrom.id,
+            accountToId = accountTo.id,
+            newBalanceFrom = accountFrom.balance - amountFrom,
+            newBalanceTo = accountTo.balance + amountTo
+        ).let {
+            if (it !is Result.Success) return it
         }
-
-        val newBalanceFrom = accountFrom.balance - amountFrom
-        val newBalanceTo = accountTo.balance + amountTo
 
         val transfer = TransferEntity(
             accountFrom = accountFrom,
@@ -42,34 +49,10 @@ class AddTransferUseCase @Inject constructor(
         )
 
         return try {
-            bankAccountRepository.updateBalance(
-                accountId = accountFrom.id,
-                newBalance =  newBalanceFrom
-            )
-            bankAccountRepository.updateBalance(
-                accountId = accountTo.id,
-                newBalance =  newBalanceTo
-            )
             transferRepository.create(transfer)
             Result.Success
         } catch (e: Exception) {
             Result.UnknownError(e)
         }
-    }
-
-    private fun isValidTransfer(
-        accountFrom: BankAccountEntity,
-        accountTo: BankAccountEntity,
-        amountFrom: BigDecimal,
-        amountTo: BigDecimal
-    ): Boolean {
-        return accountFrom != accountTo && amountFrom > BigDecimal.ZERO && amountTo > BigDecimal.ZERO
-    }
-
-    sealed interface Result {
-        data object Success : Result
-        data object InvalidTransfer : Result
-        data object InsufficientFunds : Result
-        data class UnknownError(val exception: Exception) : Result
     }
 }
