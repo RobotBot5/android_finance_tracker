@@ -13,6 +13,8 @@ import javax.inject.Inject
 class TransferHistoryAdapter @Inject constructor() :
     ListAdapter<TransferEntity, TransferHistoryAdapter.TransferViewHolder>(TransferDiffCallback) {
 
+    var onTransferClickListener: ((TransferEntity) -> Unit)? = null
+
     override fun getItemViewType(position: Int): Int {
         val transfer = getItem(position)
         return if (transfer.accountFrom.currency == transfer.accountTo.currency)
@@ -42,6 +44,9 @@ class TransferHistoryAdapter @Inject constructor() :
     override fun onBindViewHolder(holder: TransferViewHolder, position: Int) {
         val binding = holder.binding
         val transfer = getItem(position)
+        binding.root.setOnClickListener {
+            onTransferClickListener?.invoke(transfer)
+        }
         when (binding) {
             is ItemTransferSingleCurrencyBinding -> {
                 binding.tvAccountFrom.text = transfer.accountFrom.name

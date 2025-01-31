@@ -5,10 +5,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.robotbot.financetracker.domain.entities.BankAccountEntity
 import com.robotbot.financetracker.domain.entities.Currency
+import com.robotbot.financetracker.domain.entities.TransferEntity
 import com.robotbot.financetracker.domain.usecases.GetCurrencyRatesUseCase
 import com.robotbot.financetracker.domain.usecases.ConvertAmountBetweenCurrencies
 import com.robotbot.financetracker.domain.usecases.account.GetBankAccountUseCase
 import com.robotbot.financetracker.domain.usecases.transfer.AddTransferUseCase
+import com.robotbot.financetracker.domain.usecases.transfer.DeleteTransferUseCase
+import com.robotbot.financetracker.domain.usecases.transfer.GetTransferUseCase
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -34,7 +37,9 @@ class CreateTransferViewModel @Inject constructor(
     private val getBankAccountUseCase: GetBankAccountUseCase,
     private val addTransferUseCase: AddTransferUseCase,
     private val getCurrencyRatesUseCase: GetCurrencyRatesUseCase,
-    private val convertAmountBetweenCurrencies: ConvertAmountBetweenCurrencies
+    private val convertAmountBetweenCurrencies: ConvertAmountBetweenCurrencies,
+    private val getTransferUseCase: GetTransferUseCase,
+    private val deleteTransferUseCase: DeleteTransferUseCase
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(
@@ -45,6 +50,8 @@ class CreateTransferViewModel @Inject constructor(
     val state = _state.asStateFlow()
 
     private var currencyRates: Map<Currency, BigDecimal>? = null
+
+    private var transferToEditOrUndefined: TransferEntity? = null
 
     private val _amountFrom = MutableSharedFlow<String>()
     private val amountFrom = _amountFrom.map {
@@ -95,7 +102,7 @@ class CreateTransferViewModel @Inject constructor(
             updatePlaceholderForSecondAccountEvents
         ) { firstAmount, _ ->
             val currentState = state.value
-            if (currentState.displayState is CreateTransferDisplayState.SingleCurrency || firstAmount == null) {
+            if (currentState.currencyState is CreateTransferCurrencyState.SingleCurrency || firstAmount == null) {
                 BigDecimal.ZERO
             } else {
                 val currencyFrom = currentState.accountFrom?.currency
@@ -113,15 +120,15 @@ class CreateTransferViewModel @Inject constructor(
             }
         }.onEach { amountToPlaceholder ->
             _state.update { currentState ->
-                val newDisplayState =
-                    if (currentState.displayState is CreateTransferDisplayState.DifferentCurrencies) {
-                        currentState.displayState.copy(
+                if (currentState.currencyState is CreateTransferCurrencyState.DifferentCurrencies) {
+                    currentState.copy(
+                        currencyState = currentState.currencyState.copy(
                             amountToPlaceholder = amountToPlaceholder
                         )
-                    } else {
-                        CreateTransferDisplayState.DifferentCurrencies(amountToPlaceholder)
-                    }
-                currentState.copy(displayState = newDisplayState)
+                    )
+                } else {
+                    currentState
+                }
             }
         }.launchIn(viewModelScope)
     }
@@ -159,8 +166,8 @@ class CreateTransferViewModel @Inject constructor(
         }
 
         val amountTo =
-            if (currentState.displayState is CreateTransferDisplayState.DifferentCurrencies) {
-                currentState.displayState.amountTo ?: currentState.displayState.amountToPlaceholder
+            if (currentState.currencyState is CreateTransferCurrencyState.DifferentCurrencies) {
+                currentState.currencyState.amountTo ?: currentState.currencyState.amountToPlaceholder
             } else {
                 amountFrom
             }
@@ -204,43 +211,54 @@ class CreateTransferViewModel @Inject constructor(
     fun setAmountTo(amountInput: String) {
         viewModelScope.launch {
             val currentState = state.value
-            if (currentState.displayState is CreateTransferDisplayState.DifferentCurrencies) {
+            if (currentState.currencyState is CreateTransferCurrencyState.DifferentCurrencies) {
                 _state.update {
-                    currentState.copy(displayState = currentState.displayState.copy(amountTo = amountInput.toValidAmountOrNull()))
+                    currentState.copy(currencyState = currentState.currencyState.copy(amountTo = amountInput.toValidAmountOrNull()))
                 }
             }
         }
     }
 
     fun setFromAccount(bankAccountId: Int) {
-        setAccount(bankAccountId = bankAccountId, isFromAccount = true)
+        viewModelScope.launch {
+            setAccount(bankAccountId = bankAccountId, isFromAccount = true)
+        }
     }
 
     fun setToAccount(bankAccountId: Int) {
-        setAccount(bankAccountId = bankAccountId, isFromAccount = false)
+        viewModelScope.launch {
+            setAccount(bankAccountId = bankAccountId, isFromAccount = false)
+        }
     }
 
-    private fun setAccount(bankAccountId: Int, isFromAccount: Boolean) {
-        viewModelScope.launch {
-            val bankAccount = getBankAccountUseCase(bankAccountId)
-            _state.update { currentState ->
-                val isSingleCurrency = isSingleCurrency(currentState, bankAccount, isFromAccount)
-                if (isSingleCurrency) {
-                    currentState.createUpdatedState(
-                        bankAccount = bankAccount,
-                        isFromAccount = isFromAccount,
-                        newDisplayState = CreateTransferDisplayState.SingleCurrency
-                    )
-                } else {
-                    updatePlaceholderForSecondAccountEvents.emit(Unit)
-                    currentState.createUpdatedState(
-                        bankAccount = bankAccount,
-                        isFromAccount = isFromAccount,
-                        newDisplayState = null
-                    )
-                }
+    private suspend fun setAccount(bankAccountId: Int, isFromAccount: Boolean) {
+        val bankAccount = getBankAccountUseCase(bankAccountId)
+        _state.update { currentState ->
+            val isSingleCurrency = isSingleCurrency(currentState, bankAccount, isFromAccount)
+            if (isSingleCurrency) {
+                currentState.createUpdatedState(
+                    bankAccount = bankAccount,
+                    isFromAccount = isFromAccount,
+                    newDisplayState = CreateTransferCurrencyState.SingleCurrency
+                )
+            } else {
+                val newDisplayState =
+                    if (currentState.currencyState is CreateTransferCurrencyState.DifferentCurrencies) {
+                        currentState.currencyState
+                    } else {
+                        CreateTransferCurrencyState.DifferentCurrencies(
+                            amountToPlaceholder = BigDecimal.ZERO,
+                            amountTo = null
+                        )
+                    }
+                currentState.createUpdatedState(
+                    bankAccount = bankAccount,
+                    isFromAccount = isFromAccount,
+                    newDisplayState = newDisplayState
+                )
             }
         }
+        updatePlaceholderForSecondAccountEvents.emit(Unit)
     }
 
     private fun isSingleCurrency(
@@ -259,20 +277,58 @@ class CreateTransferViewModel @Inject constructor(
     private fun CreateTransferState.createUpdatedState(
         bankAccount: BankAccountEntity,
         isFromAccount: Boolean,
-        newDisplayState: CreateTransferDisplayState?
+        newDisplayState: CreateTransferCurrencyState
     ): CreateTransferState {
         return if (isFromAccount) {
             copy(
                 accountFrom = bankAccount,
                 accountTo = if (accountTo == bankAccount) null else accountTo,
-                displayState = newDisplayState ?: displayState
+                currencyState = newDisplayState
             )
         } else {
             copy(
                 accountFrom = if (accountFrom == bankAccount) null else accountFrom,
                 accountTo = bankAccount,
-                displayState = newDisplayState ?: displayState
+                currencyState = newDisplayState
             )
+        }
+    }
+
+    fun setupTransferToEditById(transferId: Int) {
+        viewModelScope.launch {
+            _state.update {
+                it.copy(displayState = CreateTransferDisplayState.Loading)
+            }
+            val transferEntity = getTransferUseCase(transferId)
+            transferToEditOrUndefined = transferEntity
+            setAmountFrom(transferEntity.amountFrom.toPlainString())
+            setDate(transferEntity.date)
+            setAccount(bankAccountId = transferEntity.accountFrom.id, isFromAccount = true)
+            setAccount(bankAccountId = transferEntity.accountTo.id, isFromAccount = false)
+            setAmountTo(transferEntity.amountTo.toPlainString())
+            _state.update {
+                it.copy(displayState = CreateTransferDisplayState.Content)
+            }
+        }
+    }
+
+    fun updateTransfer() {
+
+    }
+
+    fun deleteTransfer() {
+        val transferEntityToEdit = transferToEditOrUndefined
+        if (transferEntityToEdit == null) {
+            _state.update {
+                it.copy(displayState = CreateTransferDisplayState.Error(ErrorState.UnknownError))
+            }
+            return
+        }
+        viewModelScope.launch {
+            deleteTransferUseCase(transferEntityToEdit)
+            _state.update {
+                it.copy(displayState = CreateTransferDisplayState.WorkEnded)
+            }
         }
     }
 

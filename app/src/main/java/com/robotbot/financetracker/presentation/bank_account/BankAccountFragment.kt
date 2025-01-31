@@ -83,7 +83,9 @@ class BankAccountFragment : Fragment() {
 //                )
 //            )
             navController.navigate(
-                R.id.createTransferFragment
+                BankAccountFragmentDirections.actionBankAccountsFragmentToCreateTransferFragment(
+                    ManageMode.ADD
+                )
             )
         }
 

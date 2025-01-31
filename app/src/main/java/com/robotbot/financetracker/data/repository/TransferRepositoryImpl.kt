@@ -23,7 +23,6 @@ class TransferRepositoryImpl @Inject constructor(
 
     override fun getAll(): Flow<List<TransferEntity>> {
         return transferDao.getTransfers()
-            .onEach { delay(3000) }
             .map { mapper.mapListDbModelToListEntity(it) }
     }
 

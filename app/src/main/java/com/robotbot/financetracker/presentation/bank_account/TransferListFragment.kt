@@ -12,9 +12,12 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.findNavController
+import com.robotbot.financetracker.R
 import com.robotbot.financetracker.databinding.FragmentTransferHistoryBinding
 import com.robotbot.financetracker.presentation.FinanceTrackerApp
 import com.robotbot.financetracker.presentation.ViewModelFactory
+import com.robotbot.financetracker.presentation.navigation.ManageMode
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -54,6 +57,15 @@ class TransferListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.rvTransfers.adapter = transferHistoryAdapter
+        transferHistoryAdapter.onTransferClickListener = {
+            requireActivity().findNavController(R.id.nav_host_fragment).navigate(
+                BankAccountFragmentDirections.actionBankAccountsFragmentToCreateTransferFragment(
+                    ManageMode.EDIT
+                ).apply {
+                    transferId = it.id
+                }
+            )
+        }
         observeViewModel()
     }
 

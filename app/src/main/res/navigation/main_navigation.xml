@@ -79,6 +79,13 @@
         <action
             android:id="@+id/action_createTransferFragment_to_datePickerFragment"
             app:destination="@id/datePickerFragment" />
+        <argument
+            android:name="mode"
+            app:argType="com.robotbot.financetracker.presentation.navigation.ManageMode" />
+        <argument
+            android:name="transferId"
+            app:argType="integer"
+            android:defaultValue="0" />
     </fragment>
     <dialog
         android:id="@+id/chooseAccountDialog"

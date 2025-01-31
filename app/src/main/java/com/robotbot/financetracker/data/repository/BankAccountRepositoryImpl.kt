@@ -8,6 +8,7 @@ import com.robotbot.financetracker.domain.entities.BankAccountEntity
 import com.robotbot.financetracker.domain.repotisories.BankAccountRepository
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import java.math.BigDecimal
@@ -29,7 +30,6 @@ class BankAccountRepositoryImpl @Inject constructor(
 
     override fun getAll(): Flow<List<BankAccountEntity>> {
         return bankAccountDao.getAccounts()
-            .onEach { delay(1000) }
             .map { mapper.mapListDbModelToListEntity(it) }
     }
 

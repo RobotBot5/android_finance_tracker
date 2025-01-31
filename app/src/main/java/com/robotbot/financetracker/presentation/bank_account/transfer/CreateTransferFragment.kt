@@ -3,6 +3,7 @@ package com.robotbot.financetracker.presentation.bank_account.transfer
 import android.content.Context
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
@@ -17,12 +18,14 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.robotbot.financetracker.databinding.FragmentCreateTransferBinding
 import com.robotbot.financetracker.domain.DomainConstants
 import com.robotbot.financetracker.domain.entities.BankAccountEntity
 import com.robotbot.financetracker.presentation.FinanceTrackerApp
 import com.robotbot.financetracker.presentation.ViewModelFactory
 import com.robotbot.financetracker.presentation.bank_account.transfer.choose_account.ChooseAccountDialog
+import com.robotbot.financetracker.presentation.navigation.ManageMode
 import kotlinx.coroutines.launch
 import java.io.Serializable
 import java.util.Calendar
@@ -33,6 +36,8 @@ class CreateTransferFragment : Fragment() {
     private val component by lazy {
         (requireActivity().application as FinanceTrackerApp).component
     }
+
+    private val args by navArgs<CreateTransferFragmentArgs>()
 
     private var _binding: FragmentCreateTransferBinding? = null
     private val binding: FragmentCreateTransferBinding
@@ -48,6 +53,19 @@ class CreateTransferFragment : Fragment() {
         super.onAttach(context)
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        parseParams()
+    }
+
+    private fun parseParams() {
+        if (args.mode == ManageMode.EDIT) {
+            if (args.transferId == DomainConstants.UNDEFINED_ID) {
+                throw RuntimeException("Transfer id param is absent")
+            }
+        }
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -59,8 +77,37 @@ class CreateTransferFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        launchRightMode()
         setListenersOnViews()
         observeViewModel()
+    }
+
+    private fun launchRightMode() {
+        when (args.mode) {
+            ManageMode.ADD -> {
+                launchAddMode()
+            }
+            ManageMode.EDIT -> {
+                launchEditMode()
+            }
+        }
+    }
+
+    private fun launchEditMode() {
+        viewModel.setupTransferToEditById(args.transferId)
+        binding.btnSaveTransfer.setOnClickListener {
+            viewModel.updateTransfer()
+        }
+        binding.btnDeleteTransfer.visibility = VISIBLE
+        binding.btnDeleteTransfer.setOnClickListener {
+            viewModel.deleteTransfer()
+        }
+    }
+
+    private fun launchAddMode() {
+        binding.btnSaveTransfer.setOnClickListener {
+            viewModel.saveTransfer()
+        }
     }
 
     private fun setListenersOnViews() {
@@ -80,9 +127,6 @@ class CreateTransferFragment : Fragment() {
             }
             etTransferAmountTo.doOnTextChanged { input, _, _, _ ->
                 viewModel.setAmountTo(input.toString())
-            }
-            btnSaveTransfer.setOnClickListener {
-                viewModel.saveTransfer()
             }
             tvSelectedDate.setOnClickListener {
                 findNavController().navigate(
@@ -117,8 +161,9 @@ class CreateTransferFragment : Fragment() {
 
     private fun observeViewModel() {
         viewLifecycleOwner.lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.RESUMED) {
+            repeatOnLifecycle(Lifecycle.State.CREATED) {
                 viewModel.state.collect {
+                    Log.d("CreateTransferFragment", it.toString())
                     with(binding) {
                         btnSaveTransfer.isEnabled = it.saveButtonEnabled
                         tvSelectedDate.text = viewModel.formatDateToString(it.selectedDate)
@@ -132,14 +177,10 @@ class CreateTransferFragment : Fragment() {
                         } else {
                             tvToAccount.text = "Not specified"
                         }
+                        if (it.amountFrom != null) {
+                            etTransferAmountFrom.setTextKeepState(it.amountFrom.toPlainString())
+                        }
                         when (it.displayState) {
-                            CreateTransferDisplayState.SingleCurrency -> {
-                                tilTransferAmountTo.visibility = GONE
-                            }
-                            is CreateTransferDisplayState.DifferentCurrencies -> {
-                                tilTransferAmountTo.visibility = VISIBLE
-                                etTransferAmountTo.setHint(it.displayState.amountToPlaceholder.toPlainString())
-                            }
                             CreateTransferDisplayState.WorkEnded -> {
                                 findNavController().popBackStack()
                             }
@@ -159,6 +200,30 @@ class CreateTransferFragment : Fragment() {
                                 Toast.makeText(requireActivity(), errorText, Toast.LENGTH_SHORT)
                                     .show()
                                 findNavController().popBackStack()
+                            }
+
+                            CreateTransferDisplayState.Loading -> {
+                                binding.clMainContent.visibility = GONE
+                                binding.pbLoadingScreen.visibility = VISIBLE
+                            }
+
+                            CreateTransferDisplayState.Content -> {
+                                binding.clMainContent.visibility = VISIBLE
+                                binding.pbLoadingScreen.visibility = GONE
+                            }
+                        }
+                        when (it.currencyState) {
+                            CreateTransferCurrencyState.SingleCurrency -> {
+                                tilTransferAmountTo.visibility = GONE
+                            }
+                            is CreateTransferCurrencyState.DifferentCurrencies -> {
+                                tilTransferAmountTo.visibility = VISIBLE
+                                etTransferAmountTo.setHint(it.currencyState.amountToPlaceholder.toPlainString())
+                                if (it.currencyState.amountTo != null) {
+                                    etTransferAmountTo.setTextKeepState(it.currencyState.amountTo.toPlainString())
+                                } else {
+                                    etTransferAmountTo.setTextKeepState("")
+                                }
                             }
                         }
                     }

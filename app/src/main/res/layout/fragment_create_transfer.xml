@@ -123,6 +123,17 @@
             app:layout_constraintTop_toBottomOf="@+id/ll_transfer_amount_container"
             tools:text="1 января 1970г." />
 
+        <Button
+            android:id="@+id/btn_delete_transfer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Delete transfer"
+            android:visibility="gone"
+            app:layout_constraintBottom_toTopOf="@id/btn_save_transfer"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:visibility="visible" />
+
 
         <Button
             android:id="@+id/btn_save_transfer"
