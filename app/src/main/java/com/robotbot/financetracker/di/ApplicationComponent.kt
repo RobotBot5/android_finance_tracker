@@ -9,6 +9,8 @@ import com.robotbot.financetracker.presentation.bank_account.manage.ManageBankAc
 import com.robotbot.financetracker.presentation.bank_account.transfer.choose_account.ChooseAccountDialog
 import com.robotbot.financetracker.presentation.bank_account.transfer.CreateTransferFragment
 import com.robotbot.financetracker.presentation.category.manage.ManageCategoryFragment
+import com.robotbot.financetracker.presentation.profile.SettingsFragment
+import com.robotbot.financetracker.presentation.profile.ThemeChooseFragment
 import dagger.BindsInstance
 import dagger.Component
 
@@ -31,6 +33,10 @@ interface ApplicationComponent {
     fun inject(fragment: BankAccountListFragment)
 
     fun inject(fragment: TransferListFragment)
+
+    fun inject(fragment: SettingsFragment)
+
+    fun inject(fragment: ThemeChooseFragment)
 
 
     @Component.Factory

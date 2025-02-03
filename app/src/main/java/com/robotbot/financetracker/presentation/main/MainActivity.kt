@@ -6,7 +6,6 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.robotbot.financetracker.R
@@ -32,7 +31,7 @@ class MainActivity : AppCompatActivity() {
         binding.bottomNavigation.setupWithNavController(navController)
         navController.addOnDestinationChangedListener { _, destination, _ ->
             when (destination.id) {
-                R.id.category_fragment, R.id.bank_accounts_fragment -> {
+                R.id.category_fragment, R.id.bank_accounts_fragment, R.id.profileFragment -> {
                     binding.bottomNavigation.visibility = View.VISIBLE
                 }
                 else -> {
