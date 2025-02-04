@@ -1,4 +1,4 @@
-package com.robotbot.financetracker.presentation.extensions
+package com.robotbot.financetracker.presentation.utils.extensions
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.merge

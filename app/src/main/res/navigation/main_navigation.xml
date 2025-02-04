@@ -122,5 +122,9 @@
     <fragment
         android:id="@+id/themeChooseFragment"
         android:name="com.robotbot.financetracker.presentation.profile.ThemeChooseFragment"
-        android:label="ThemeChooseFragment" />
+        android:label="ThemeChooseFragment" >
+        <argument
+            android:name="settingKey"
+            app:argType="com.robotbot.financetracker.domain.entities.SettingsEnum" />
+    </fragment>
 </navigation>

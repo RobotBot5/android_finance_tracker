@@ -2,6 +2,7 @@ package com.robotbot.financetracker.presentation.profile
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,6 +14,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.robotbot.financetracker.R
 import com.robotbot.financetracker.databinding.FragmentSettingsBinding
+import com.robotbot.financetracker.domain.entities.SettingsEnum
 import com.robotbot.financetracker.presentation.FinanceTrackerApp
 import com.robotbot.financetracker.presentation.ViewModelFactory
 import kotlinx.coroutines.launch
@@ -33,6 +35,8 @@ class SettingsFragment : Fragment() {
 
     private val viewModel: SettingsViewModel by viewModels { viewModelFactory }
 
+    private val navController by lazy { findNavController() }
+
     override fun onAttach(context: Context) {
         component.inject(this)
         super.onAttach(context)
@@ -50,9 +54,11 @@ class SettingsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         observeViewModel()
-        binding.itemTheme.root.setOnClickListener {
-            findNavController().navigate(
-                R.id.themeChooseFragment
+        binding.settingTheme.setOnClickListener {
+            navController.navigate(
+                SettingsFragmentDirections.actionSettingsFragmentToThemeChooseFragment(
+                    SettingsEnum.THEME
+                )
             )
         }
     }
@@ -67,7 +73,7 @@ class SettingsFragment : Fragment() {
 
                         }
                         is SettingsState.Content -> {
-                            binding.itemTheme.tvValue.text = it.applicationSettings.theme.name
+                            binding.settingTheme.settingValue = it.translatedSettings.theme
                         }
                         SettingsState.Error -> {
 
@@ -81,5 +87,13 @@ class SettingsFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private fun logDebug(msg: String) {
+        Log.d(LOG_TAG, msg)
+    }
+
+    companion object {
+        private const val LOG_TAG = "SettingsFragment"
     }
 }

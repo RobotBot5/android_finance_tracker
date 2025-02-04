@@ -1,6 +1,7 @@
 package com.robotbot.financetracker.di
 
 import android.app.Application
+import com.robotbot.financetracker.presentation.FinanceTrackerApp
 import com.robotbot.financetracker.presentation.bank_account.BankAccountFragment
 import com.robotbot.financetracker.presentation.bank_account.BankAccountListFragment
 import com.robotbot.financetracker.presentation.bank_account.TransferListFragment
@@ -37,6 +38,8 @@ interface ApplicationComponent {
     fun inject(fragment: SettingsFragment)
 
     fun inject(fragment: ThemeChooseFragment)
+
+    fun inject(application: FinanceTrackerApp)
 
 
     @Component.Factory

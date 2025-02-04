@@ -10,7 +10,9 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.NavArgs
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.robotbot.financetracker.databinding.FragmentSettingsBinding
 import com.robotbot.financetracker.databinding.FragmentThemeChooseBinding
 import com.robotbot.financetracker.presentation.FinanceTrackerApp
@@ -24,6 +26,8 @@ class ThemeChooseFragment : Fragment() {
     private val component by lazy {
         (requireActivity().application as FinanceTrackerApp).component
     }
+
+    private val args by navArgs<ThemeChooseFragmentArgs>()
 
     private var _binding: FragmentThemeChooseBinding? = null
     private val binding: FragmentThemeChooseBinding
@@ -47,12 +51,14 @@ class ThemeChooseFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        viewModel.setSettingKey(args.settingKey)
         _binding = FragmentThemeChooseBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         adapter.onSettingClickListener = {
             viewModel.setThemeInSettings(it)
         }

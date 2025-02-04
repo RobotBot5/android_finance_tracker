@@ -2,6 +2,7 @@ package com.robotbot.financetracker.domain.usecases.settings
 
 import com.robotbot.financetracker.domain.entities.ApplicationThemeSetting
 import com.robotbot.financetracker.domain.repotisories.ApplicationSettingsRepository
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class ThemeSettingUseCase @Inject constructor(
@@ -12,5 +13,5 @@ class ThemeSettingUseCase @Inject constructor(
         applicationSettingsRepository.saveThemePreference(theme)
     }
 
-    suspend fun getTheme(): ApplicationThemeSetting = applicationSettingsRepository.getThemePreference()
+    fun getTheme(): Flow<ApplicationThemeSetting> = applicationSettingsRepository.getThemePreference()
 }

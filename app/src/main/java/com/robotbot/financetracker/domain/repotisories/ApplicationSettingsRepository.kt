@@ -8,7 +8,7 @@ interface ApplicationSettingsRepository {
 
     suspend fun saveThemePreference(theme: ApplicationThemeSetting)
 
-    suspend fun getThemePreference(): ApplicationThemeSetting
+    fun getThemePreference(): Flow<ApplicationThemeSetting>
 
     fun getAllSettings(): Flow<ApplicationSettingsEntity>
 }

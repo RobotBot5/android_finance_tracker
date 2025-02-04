@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Finance Tracker</string>
+    <string name="label_choose_currency">Выберете валюту:</string>
+    <string name="hint_account_name">Название счета:</string>
+    <string name="hint_account_balance">Баланс счета:</string>
+    <string name="btn_save_account">Сохранить счет</string>
+    <string name="error_incorrect_name">Некорректное название</string>
+    <string name="error_incorrect_balance">Некорректный баланс</string>
+    <string name="btn_delete_account">Удалить счет</string>
+    <string name="dialog_message_delete_account">Вы уверены, что хотите удалить счет %s?</string>
+    <string name="dialog_message_delete_category">Вы уверены, что хотите удалить категорию %s?</string>
+    <string name="dialog_delete_account_button_confirm">Удалить</string>
+    <string name="dialog_delete_account_button_cancel">Отмена</string>
+    <string name="til_category_error_name">Некорректное название</string>
+    <string name="btn_category_add">Добавить категорию</string>
+    <string name="hint_category_name">Название категории:</string>
+    <string name="rb_expense">Расходы</string>
+    <string name="rb_income">Доходы</string>
+    <string name="btn_category_delete">Удалить категорию</string>
+    <string name="btn_category_save">Сохранить категорию</string>
+    <string name="theme_light">Светлая</string>
+    <string name="theme_dark">Темная</string>
+    <string name="theme_system">Системная</string>
+    <string name="language_ru">Русский</string>
+    <string name="language_en">Английский</string>
+    <string name="home">главная</string>
+    <string name="accounts">Счета</string>
+    <string name="categories">Категории</string>
+    <string name="profile">Профиль</string>
+    <string name="theme">Тема</string>
+    <string name="language">Язык</string>
+</resources>

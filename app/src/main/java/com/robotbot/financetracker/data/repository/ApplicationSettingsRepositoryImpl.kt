@@ -8,7 +8,6 @@ import com.robotbot.financetracker.domain.entities.ApplicationSettingsEntity
 import com.robotbot.financetracker.domain.entities.ApplicationThemeSetting
 import com.robotbot.financetracker.domain.repotisories.ApplicationSettingsRepository
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
@@ -26,15 +25,17 @@ class ApplicationSettingsRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getThemePreference(): ApplicationThemeSetting {
-        val preferences = dataStore.data.first()
-        return preferences[KEY_THEME]?.let { ApplicationThemeSetting.valueOf(it) }
-            ?: ApplicationThemeSetting.SYSTEM
-    }
+    override fun getThemePreference(): Flow<ApplicationThemeSetting> =
+        dataStore.data.map { preferences ->
+            preferences[KEY_THEME]?.let { ApplicationThemeSetting.valueOf(it) }
+                ?: ApplicationThemeSetting.SYSTEM
+        }
 
     override fun getAllSettings(): Flow<ApplicationSettingsEntity> = dataStore.data.map {
         val theme = it[KEY_THEME]?.let { ApplicationThemeSetting.valueOf(it) }
             ?: ApplicationThemeSetting.SYSTEM
-        ApplicationSettingsEntity(theme = theme)
+        ApplicationSettingsEntity(
+            theme = theme
+        )
     }
 }
