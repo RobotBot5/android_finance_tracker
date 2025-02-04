@@ -29,7 +29,7 @@ class ProfileFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.btnSettings.setOnClickListener {
             findNavController().navigate(
-                R.id.settingsFragment
+                ProfileFragmentDirections.actionProfileFragmentToSettingsFragment()
             )
         }
     }

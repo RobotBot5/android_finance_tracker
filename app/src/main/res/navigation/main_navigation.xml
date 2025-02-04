@@ -109,7 +109,9 @@
         android:label="ProfileFragment" >
         <action
             android:id="@+id/action_profileFragment_to_settingsFragment"
-            app:destination="@id/settingsFragment" />
+            app:destination="@id/settingsFragment"
+            app:enterAnim="@anim/from_right"
+            app:popEnterAnim="@anim/from_left" />
     </fragment>
     <fragment
         android:id="@+id/settingsFragment"
@@ -117,7 +119,9 @@
         android:label="SettingsFragment" >
         <action
             android:id="@+id/action_settingsFragment_to_themeChooseFragment"
-            app:destination="@id/themeChooseFragment" />
+            app:destination="@id/themeChooseFragment"
+            app:enterAnim="@anim/from_right"
+            app:popEnterAnim="@anim/from_left" />
     </fragment>
     <fragment
         android:id="@+id/themeChooseFragment"
